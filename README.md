@@ -16,14 +16,14 @@ Playbooks use variables defined in a resource file, add your resources to the `r
 
 Example:
 ```bash
-ansible-playbook -i ./inventory ./ansible/playbooks/node/provision.yml -e @resources/nodes/my-node.yml
+ansible-playbook -i ./inventory ./ansible/playbooks/server/provision.yml -e @resources/servers/my-servers.yml
 ```
 
-### Node (webserver)
+### Server
 
 ```bash
-# Provision a node: 
-ansible-playbook -i ./inventory ./ansible/playbooks/node/provision.yml -e @resources/nodes/<node-name>.yml
+# Provision a server: 
+ansible-playbook -i ./inventory ./ansible/playbooks/server/provision.yml -e @resources/servers/<servers-name>.yml
 ```
 
 ### Site

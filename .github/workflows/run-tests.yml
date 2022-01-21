@@ -33,9 +33,9 @@ jobs:
           docker-compose up -d
           chmod 600 ./docker/filesystem/root/.ssh/id_ed25519
 
-      - name: Test node playbooks
+      - name: Test server playbooks
         run: |
-          ansible-playbook -i ./inventory ./ansible/playbooks/node/provision.yml -e @tests/nodes/test-node.yml
+          ansible-playbook -i ./inventory ./ansible/playbooks/server/provision.yml -e @tests/servers/test-server.yml
 
       - name: Test site playbooks
         run: |
