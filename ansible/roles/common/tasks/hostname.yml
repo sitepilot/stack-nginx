@@ -1,0 +1,14 @@
+---
+- name: "hostname : set the hostname"
+  hostname:
+    name: "{{ hostname }}"
+  when: platform != 'docker'
+
+- name: "hostname : add hostname to /etc/hosts"
+  blockinfile:
+    path: /etc/hosts
+    marker: "# {mark} Sitepilot Hostname"
+    block: |
+      ::1 {{ hostname }}
+      127.0.0.1 {{ hostname }}
+  when: platform != 'docker'

@@ -1,0 +1,7 @@
+---
+smtp_host: 127.0.0.1
+smtp_port: 1025
+smtp_tls: false
+smtp_user: ""
+smtp_password: ""
+smtp_from: "website@sitepilot.local"

@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+defaults
+auth           {{ 'on' if smtp_user and smtp_password else 'off' }}
+tls            {{ 'on' if smtp_tls else 'off' }}
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+
+account        mailrelay
+host           {{ smtp_host }}
+port           {{ smtp_port }}
+from           {{ smtp_from }}
+user           {{ smtp_user }}
+password       {{ smtp_password }}
+
+account default : mailrelay

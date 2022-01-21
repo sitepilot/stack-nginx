@@ -1,0 +1,122 @@
+---
+- hosts: "{{ host }}"
+  vars:
+    site_authorized_keys: []
+  roles:
+    - role: "../../roles/php"
+  tasks:
+    - package_facts:
+        manager: "auto"
+
+    - assert:
+        that:
+          - php_version is defined
+          - site_name is defined
+          - site_user is defined
+          - site_domains is defined
+          - site_password is defined
+          - "'nginx' in ansible_facts.packages"
+
+    - name: "create site-users group"
+      group:
+        name: site-users
+        state: present
+      when:
+        - site_name == site_user
+
+    - name: "create site user"
+      user:
+        name: "{{ site_user }}"
+        password: "{{ site_password }}"
+        groups: site-users
+        shell: /bin/bash
+        append: false
+        create_home: true
+        home: "/opt/sitepilot/sites/{{ site_name }}"
+      when:
+        - site_name == site_user
+
+    - name: "add authorized keys"
+      authorized_key:
+        user: "{{ site_user }}"
+        state: "present"
+        key: "{{ site_authorized_keys | join('\n') }}"
+        exclusive: true
+      when:
+        - site_name == site_user
+
+    - name: "create site folders"
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+        owner: "{{ site_user }}"
+        group: "{{ site_user }}"
+      loop:
+        - "/opt/sitepilot/sites/{{ site_name }}"
+        - "/opt/sitepilot/sites/{{ site_name }}/logs"
+        - "/opt/sitepilot/sites/{{ site_name }}/files"
+        - "/opt/sitepilot/sites/{{ site_name }}/.local/bin"
+
+    - name: "setup acl"
+      acl:
+        path: "{{ item.path }}"
+        entity: "{{ item.entity }}"
+        etype: group
+        permissions: "{{ item.permissions }}"
+        state: present
+        recursive: "{{ item.recursive }}"
+        default: "{{ item.default }}"
+      loop:
+        - path: "/opt/sitepilot/sites/{{ site_name }}"
+          permissions: ---
+          entity: "site-users"
+          recursive: true
+          default: false
+
+    - name: "copy shared files"
+      copy:
+        src: "files/share"
+        dest: /opt/sitepilot/sites
+        owner: www-data
+        group: www-data
+        mode: "0755"
+
+    - name: "configure nginx"
+      template:
+        src: templates/nginx.j2
+        dest: "/etc/nginx/sites-available/{{ site_name }}"
+        mode: "0644"
+      notify: reload nginx
+
+    - name: "configure pool"
+      template:
+        src: templates/pool.j2
+        dest: "/etc/php/{{ php_version }}/fpm/pool.d/{{ site_name }}.conf"
+        mode: "0644"
+      notify: "reload php{{ php_version }}-fpm"
+
+    - name: "enable site"
+      file:
+        src: "/etc/nginx/sites-available/{{ site_name }}"
+        dest: "/etc/nginx/sites-enabled/{{ site_name }}"
+        state: link
+        mode: "0644"
+      notify: reload nginx
+
+    - name: "set php version"
+      file:
+        src: "/usr/bin/php{{ php_version }}"
+        dest: "/opt/sitepilot/sites/{{ site_name }}/.local/bin/php"
+        state: link
+        mode: "0755"
+
+    - name: cleanup fpm pools
+      include_tasks: includes/cleanup-pool.yml
+      loop: "{{ php_versions }}"
+
+  handlers:
+    - name: reload nginx
+      service:
+        name: nginx
+        state: reloaded

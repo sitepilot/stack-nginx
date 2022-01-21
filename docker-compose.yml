@@ -1,0 +1,14 @@
+---
+services:
+  test-server:
+    image: test-server
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    privileged: true
+    ports:
+      - "10080:80"
+      - "10443:443"
+      - "10022:22"
+    volumes:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"

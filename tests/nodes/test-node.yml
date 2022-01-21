@@ -1,0 +1,37 @@
+host: test-server
+
+# General
+platform: docker
+hostname: test-server
+
+# Admin
+admin: captain
+admin_password: $6$Qdt/HtiqjKboQjqU$.p0weWNtiY9bkz3wmYrgQ.M6R/MqZ.3lfUCLfAXOuIC.jlj7V7FJBGaM/1GmVP4ubXgto64sNWJFu3X.UX41e0
+admin_authorized_keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC/n4j43Bn79bdXrB/I5cS3xEtCdkcl2NVpxd4WOefLgT1j9try83UE35RwrhOkCLC/ctR/TGeQdQSq0Rff9g208mQI261bDD2OkcuIRv1VlX/tu/9kskH2UcX9V22cLYdCDOli2f5R/2mHLg+AtICESYOLxZ+zGYLnq0fB1jBIVoV+ymBOZrzgGmtwFxsTEVc6MRE9dtO5YXKg6qWiP9icm5+qpqlY12jg13dwJRJhqhwlkxBINEavZZrWgCUJ6JYaXiuBc/z0kABqrZk5lKPPrk4jNXDSpbd1hHlj83MoUxbiLTA23VGL+Mpij9qEw0lER7ix9EW+XvDM28LXSJ5BRJRXBCSNQnNmRa8GmHoPeLdhR/Tlp2ZAzfCLuDfqsTIfFzn//GAvxcIIR+VT/yR76rqrBb1bXXEAverlE2hpic3515rzex1BODglYGbrGvfIFPx2pKjQXZ+oj/xoq3izulESUyPBClNvykrGsl03jwPZASWdjn2b4nGFVT5hf3k= test@sitepilot.local
+
+# PHP
+php_version: "8.0"
+
+# SMTP
+smtp_enabled: true
+
+# Mailhog
+mailhog_enabled: true
+
+# phpMyAdmin
+phpmyadmin_enabled: true
+
+# MariaDB
+mariadb_enabled: true
+mariadb_version: "10.6"
+mariadb_root_password: "supersecret"
+
+# Composer
+composer_enabled: true
+
+# WPCLI
+wpcli_enabled: true
+
+# Node Exporter
+metrics_enabled: true

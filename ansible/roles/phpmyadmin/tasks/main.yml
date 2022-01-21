@@ -1,0 +1,35 @@
+---
+- package_facts:
+    manager: "auto"
+
+- assert:
+    that:
+      - phpmyadmin_version is defined
+      - docker_network_name is defined
+      - "'nginx' in ansible_facts.packages"
+      - "'docker-ce' in ansible_facts.packages"
+
+- name: "start container"
+  docker_container:
+    name: "phpmyadmin"
+    hostname: "phpmyadmin"
+    image: "phpmyadmin:{{ phpmyadmin_version }}"
+    pull: true
+    restart_policy: always
+    env:
+      PMA_HOST: mysql
+      UPLOAD_LIMIT: 1G
+      PMA_ABSOLUTE_URI: "/-/phpmyadmin"
+    ports:
+      - "8001:80"
+    networks:
+      - name: "{{ docker_network_name }}"
+    purge_networks: true
+    networks_cli_compatible: false
+
+- name: "configure nginx"
+  template:
+    src: nginx.j2
+    dest: /etc/nginx/locations/phpmyadmin.conf
+    mode: "0644"
+  notify: reload nginx

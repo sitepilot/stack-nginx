@@ -1,0 +1,16 @@
+---
+- name: "admin : ensure '{{ admin }}' user exists"
+  user:
+    uid: 1001
+    name: "{{ admin }}"
+    password: "{{ admin_password }}"
+    groups: sudo
+    shell: /bin/bash
+    append: true
+
+- name: "admin add authorized keys"
+  authorized_key:
+    user: "{{ admin }}"
+    state: "present"
+    key: "{{ admin_authorized_keys | join('\n') }}"
+    exclusive: true

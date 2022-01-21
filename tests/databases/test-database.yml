@@ -1,0 +1,15 @@
+---
+host: test-server
+
+# General
+database_name: test_database
+database_user: test_user
+database_password: secret
+
+# Backup
+database_backup_repo: /tmp/backup/test-database
+database_backup_password: secret
+database_backup_tag: test-backup-database
+
+# Restore
+database_restore_id: latest

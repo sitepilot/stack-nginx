@@ -1,0 +1,27 @@
+---
+- assert:
+    that:
+      - platform is defined
+      - hostname is defined
+      - admin_password is defined
+
+- include: base.yml
+  tags: "base"
+
+- include: filesystem.yml
+  tags: "filesystem"
+
+- include: hostname.yml
+  tags: "hostname"
+
+- include: admin.yml
+  tags: "admin"
+
+- include: sshd.yml
+  tags: "sshd"
+
+- include: firewall.yml
+  tags: "firewall"
+
+- include: unattended-upgrades.yml
+  tags: "unattended-upgrades"

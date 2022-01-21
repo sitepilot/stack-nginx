@@ -1,0 +1,27 @@
+---
+- hosts: "{{ host }}"
+  vars:
+    site_backup_s3_key: ""
+    site_backup_s3_secret: ""
+  tasks:
+    - package_facts:
+        manager: "auto"
+
+    - assert:
+        that:
+          - site_name is defined
+          - site_backup_repo is defined
+          - site_backup_password is defined
+          - "'restic' in ansible_facts.packages"
+
+    - name: "get site snapshots"
+      command: "restic -r {{ site_backup_repo}} --json snapshots"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ site_backup_s3_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ site_backup_s3_secret }}"
+        RESTIC_PASSWORD: "{{ site_backup_password }}"
+      register: result
+
+    - name: "result"
+      debug:
+        msg: "{{ result.stdout_lines | last}}"

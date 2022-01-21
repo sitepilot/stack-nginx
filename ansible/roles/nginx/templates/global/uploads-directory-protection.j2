@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+# Deny access to any files with a .php extension in the uploads directory
+location ~* /uploads/.*\.php$ {
+    deny all;
+    access_log off;
+}

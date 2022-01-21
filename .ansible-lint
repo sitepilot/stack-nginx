@@ -1,0 +1,4 @@
+---
+skip_list:
+  - unnamed-task
+  - meta-no-info

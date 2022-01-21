@@ -1,0 +1,17 @@
+; {{ ansible_managed }}
+post_max_size = 64M
+upload_max_filesize = 64M
+memory_limit=256M
+
+expose_php=Off
+max_input_vars=3000
+
+opcache.enable=1
+opcache.max_accelerated_files=10000
+opcache.memory_consumption=128
+opcache.revalidate_freq=2
+opcache.save_comments=0
+
+sendmail_path=/usr/bin/msmtp -t
+
+disable_functions = disk_free_space,disk_total_space,diskfreespace,dl,exec,opcache_get_configuration,opcache_get_status,passthru,pclose,pcntl_alarm,pcntl_exec,pcntl_fork,pcntl_get_last_error,pcntl_getpriority,pcntl_setpriority,pcntl_signal,pcntl_signal_dispatch,pcntl_sigprocmask,pcntl_sigtimedwait,pcntl_sigwaitinfo,pcntl_strerror,pcntl_waitpid,pcntl_wait,pcntl_wexitstatus,pcntl_wifcontinued,pcntl_wifexited,pcntl_wifsignaled,pcntl_wifstopped,pcntl_wstopsig,pcntl_wtermsig,popen,posix_getpwuid,posix_kill,posix_mkfifo,posix_setpgid,posix_setsid,posix_setuid,posix_uname,proc_close,proc_get_status,proc_nice,proc_open,proc_terminate,shell_exec,show_source,system

@@ -1,0 +1,36 @@
+# {{ ansible_managed }}
+# The key to use when saving cache files, which will run through the MD5 hashing algorithm.
+fastcgi_cache_key "$scheme$request_method$host$request_uri";
+
+# If an error occurs when communicating with FastCGI server, return cached content.
+# Useful for serving cached content if the PHP process dies or timeouts.
+fastcgi_cache_use_stale error timeout updating invalid_header http_500;
+
+# Allow caching of requests which contain the following headers.
+fastcgi_ignore_headers Cache-Control Expires;
+
+# Show the cache status in server responses.
+add_header Sitepilot-Cache $upstream_cache_status;
+
+# Don't skip cache by default
+set $skip_cache 0;
+
+# POST requests should always go to PHP
+if ($request_method = POST) {
+	set $skip_cache 1;
+}
+
+# URLs containing query strings should always go to PHP
+if ($query_string != "") {
+	set $skip_cache 1;
+}
+
+# Don't cache URIs containing the following segments
+if ($request_uri ~* "/wp-admin/|/wp-json/|/xmlrpc.php|wp-.*.php|/feed/|index.php|sitemap(_index)?.xml|/cart/|/basket/|/checkout/|/my-account/") {
+	set $skip_cache 1;
+}
+
+# Don't use the cache for logged in users or recent commenters
+if ($http_cookie ~* "comment_author|wordpress_[a-f0-9]+|wp-postpass|wordpress_no_cache|wordpress_logged_in|edd_items_in_cart|woocommerce_items_in_cart") {
+	set $skip_cache 1;
+}

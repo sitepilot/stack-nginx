@@ -1,0 +1,42 @@
+---
+- hosts: "{{ host }}"
+  roles:
+    - role: "../../roles/php"
+  tasks:
+    - assert:
+        that:
+          - php_version is defined
+          - site_name is defined
+          - site_user is defined
+
+    - name: "destroy nginx configs"
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "/opt/sitepilot/sites/{{ site_name }}"
+        - "/etc/nginx/sites-enabled/{{ site_name }}"
+        - "/etc/nginx/sites-available/{{ site_name }}"
+      notify:
+        - reload nginx
+
+    - name: cleanup fpm pools
+      include_tasks: includes/cleanup-pool.yml
+      vars:
+        action: destroy
+      loop: "{{ php_versions }}"
+
+    - meta: flush_handlers
+
+    - name: "destroy site user"
+      user:
+        name: "{{ site_user }}"
+        state: absent
+      when:
+        - site_name == site_user
+
+  handlers:
+    - name: reload nginx
+      service:
+        name: nginx
+        state: reloaded

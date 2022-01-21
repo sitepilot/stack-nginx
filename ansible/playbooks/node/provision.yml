@@ -1,0 +1,50 @@
+---
+- hosts: "{{ host }}"
+  vars:
+    smtp_enabled: false
+    mariadb_enabled: false
+    phpmyadmin_enabled: false
+    mailhog_enabled: false
+    composer_enabled: false
+    wpcli_enabled: false
+    metrics_enabled: false
+  roles:
+    - role: ../../roles/common
+      tags: common
+
+    - role: ../../roles/nginx
+      tags: ["never", "nginx"]
+
+    - role: ../../roles/php
+      tags: ["never", "php"]
+
+    - role: ../../roles/docker
+      tags: ["never", "docker"]
+
+    - role: ../../roles/smtp
+      tags: smtp
+      when: smtp_enabled
+
+    - role: ../../roles/mariadb
+      tags: mariadb
+      when: mariadb_enabled
+
+    - role: ../../roles/phpmyadmin
+      tags: phpmyadmin
+      when: phpmyadmin_enabled
+
+    - role: ../../roles/mailhog
+      tags: mailhog
+      when: mailhog_enabled
+
+    - role: ../../roles/composer
+      tags: composer
+      when: composer_enabled
+
+    - role: ../../roles/wpcli
+      tags: wpcli
+      when: wpcli_enabled
+
+    - role: ../../roles/metrics
+      tags: metrics
+      when: metrics_enabled

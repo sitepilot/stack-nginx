@@ -1,0 +1,11 @@
+---
+- name: "install required packages"
+  apt:
+    name: "msmtp"
+    state: present
+
+- name: "generate configuration"
+  template:
+    src: msmtprc.j2
+    dest: "/etc/msmtprc"
+    mode: "0644"

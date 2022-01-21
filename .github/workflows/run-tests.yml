@@ -1,0 +1,54 @@
+---
+name: run-tests
+
+on:
+  push:
+    paths-ignore:
+      - "docker/**"
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('./requirements.txt') }}
+          restore-keys: ${{ runner.os }}-pip-
+
+      - name: Install pip packages
+        run: |
+          pip3 install -r ./requirements.txt
+
+      - name: Lint Ansible files
+        run: ansible-lint ./ansible
+
+      - name: Start test container
+        run: |
+          sudo modprobe ip6table_filter
+          docker-compose up -d
+          chmod 600 ./docker/filesystem/root/.ssh/id_ed25519
+
+      - name: Test node playbooks
+        run: |
+          ansible-playbook -i ./inventory ./ansible/playbooks/node/provision.yml -e @tests/nodes/test-node.yml
+
+      - name: Test site playbooks
+        run: |
+          ansible-playbook -i ./inventory ./ansible/playbooks/site/provision.yml -e @tests/sites/test-site-80.yml
+          ansible-playbook -i ./inventory ./ansible/playbooks/site/backup.yml -e @tests/sites/test-site-80.yml
+          ansible-playbook -i ./inventory ./ansible/playbooks/site/restore.yml -e @tests/sites/test-site-80.yml
+          ansible-playbook -i ./inventory ./ansible/playbooks/site/list-backups.yml -e @tests/sites/test-site-80.yml
+          ansible-playbook -i ./inventory ./ansible/playbooks/site/destroy.yml -e @tests/sites/test-site-80.yml
+
+      - name: Test database playbooks
+        run: |
+          ansible-playbook -i ./inventory ./ansible/playbooks/database/provision.yml -e @tests/databases/test-database.yml
+          ansible-playbook -i ./inventory ./ansible/playbooks/database/backup.yml -e @tests/databases/test-database.yml
+          ansible-playbook -i ./inventory ./ansible/playbooks/database/restore.yml -e @tests/databases/test-database.yml
+          ansible-playbook -i ./inventory ./ansible/playbooks/database/list-backups.yml -e @tests/databases/test-database.yml
+          ansible-playbook -i ./inventory ./ansible/playbooks/database/destroy.yml -e @tests/databases/test-database.yml

@@ -1,0 +1,13 @@
+---
+timezone: UTC
+
+admin: "captain"
+admin_authorized_keys: []
+
+firewall_rules:
+  - port: 80
+    comment: "http"
+  - port: 443
+    comment: "https"
+  - port: 22
+    comment: "ssh"

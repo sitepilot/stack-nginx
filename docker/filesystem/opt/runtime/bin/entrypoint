@@ -1,0 +1,6 @@
+#!/bin/bash
+
+trap "exit" SIGINT
+trap "exit" SIGTERM
+
+exec "$@"
