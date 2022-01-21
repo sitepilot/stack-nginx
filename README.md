@@ -68,6 +68,7 @@ ansible-playbook -i <inventory-file> ./playbooks/database/destroy.yml -e @resour
 
 * Mailhog: `https://{{ site-domain }}/-/mailhog/`
 * phpMyAdmin: `https://{{ site-domain }}/-/phpmyadmin/`
+* Node Exporter: `https://{{ site-domain }}/-/monitor/`
 * PHP info: `https://{{ site-domain }}/-/phpinfo/`
 * Health check: `https://{{ site-domain }}/-/ping/`
 * Cache purge: `https://{{ site-domain }}/-/purge/?url=all`
