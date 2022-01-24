@@ -11,9 +11,6 @@
     - role: "../../roles/php"
     - role: "../../roles/nginx"
   tasks:
-    - package_facts:
-        manager: "auto"
-
     - assert:
         that:
           - php_version is defined

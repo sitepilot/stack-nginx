@@ -3,13 +3,14 @@
   apt_repository:
     repo: ppa:ondrej/nginx
     state: present
+  register: add_repository
 
 - name: "install packages"
   apt:
     name:
       - nginx
     state: present
-    update_cache: true
+    update_cache: "{{ add_repository.changed }}"
   notify: reload nginx
 
 - name: "install python libraries"

@@ -1,12 +1,10 @@
 ---
 - hosts: "{{ host }}"
-  roles:
-    - role: "../../roles/php"
-    - role: "../../roles/nginx"
   tasks:
+    - include_vars: "../../roles/php/vars/main.yml"
+
     - assert:
         that:
-          - php_version is defined
           - site_name is defined
 
     - name: "destroy nginx configs"
@@ -32,3 +30,7 @@
       user:
         name: "{{ site_name }}"
         state: absent
+
+  handlers:
+    - include: "../../roles/php/handlers/main.yml"
+    - include: "../../roles/nginx/handlers/main.yml"
