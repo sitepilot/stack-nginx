@@ -6,21 +6,21 @@
 # returning 444 "no response".
 
 server {
-	listen 80 default_server deferred;
-	listen [::]:80 default_server deferred;
-	listen 443 ssl default_server deferred;
-	listen [::]:443 ssl default_server deferred;
+  listen 80 default_server deferred;
+  listen [::]:80 default_server deferred;
+  listen 443 ssl default_server deferred;
+  listen [::]:443 ssl default_server deferred;
 
-	server_name _;
+  server_name _;
 
-	ssl_certificate /etc/nginx/sites-available/.default.crt;
-	ssl_certificate_key /etc/nginx/sites-available/.default.key;
+  ssl_certificate /etc/nginx/sites-available/.default.crt;
+  ssl_certificate_key /etc/nginx/sites-available/.default.key;
 
-	include global/https.conf;
+  include global/https.conf;
 
-	include locations/*;
+  include locations/*;
 
-	location / {
-		return 444;
-	}
+  location / {
+    return 444;
+  }
 }
