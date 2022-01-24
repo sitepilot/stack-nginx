@@ -19,6 +19,7 @@
       - nano
       - rsyslog
       - restic
+      - bubblewrap
     state: present
 
 - name: "base : enable and start rsyslog"

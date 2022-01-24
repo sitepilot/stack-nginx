@@ -5,95 +5,102 @@ fastcgi_cache_path /opt/sitepilot/sites/{{ site_name }}/cache levels=1:2 keys_zo
 include sites-available/{{ site_name }}/before/*;
 
 server {
-	listen 443 ssl http2;
-	listen [::]:443 ssl http2;
+  listen 443 ssl http2;
+  listen [::]:443 ssl http2;
 
-	server_name {{ site_domains | join(' ') }};
+  server_name {{ site_domains | join(' ') }};
 
-	ssl_certificate /etc/nginx/sites-available/.default.crt;
-	ssl_certificate_key /etc/nginx/sites-available/.default.key;
+  ssl_certificate /etc/nginx/sites-available/.default.crt;
+  ssl_certificate_key /etc/nginx/sites-available/.default.key;
 
-	root /opt/sitepilot/sites/{{ site_name }}/files/;
+  root /opt/sitepilot/sites/{{ site_name }}/files/;
 
-	index index.html index.php;
+  index index.html index.php;
 
-	access_log /opt/sitepilot/sites/{{ site_name }}/logs/access.log;
-	error_log /opt/sitepilot/sites/{{ site_name }}/logs/error.log;
+  access_log /opt/sitepilot/sites/{{ site_name }}/logs/access.log;
+  error_log /opt/sitepilot/sites/{{ site_name }}/logs/error.log;
 
-	# Don't allow pages to be rendered in an iframe on external domains.
-	add_header X-Frame-Options "SAMEORIGIN";
+  # Don't allow pages to be rendered in an iframe on external domains.
+  add_header X-Frame-Options "SAMEORIGIN";
 
-	# MIME sniffing prevention
-	add_header X-Content-Type-Options "nosniff";
+  # MIME sniffing prevention
+  add_header X-Content-Type-Options "nosniff";
 
-	# Enable cross-site scripting filter in supported browsers.
-	add_header X-Xss-Protection "1; mode=block";
+  # Enable cross-site scripting filter in supported browsers.
+  add_header X-Xss-Protection "1; mode=block";
 
-	# Global includes
-	include global/fastcgi-cache.conf;
-	include global/https.conf;
-	include global/uploads-directory-protection.conf;
-	include global/xmlrpc-protection.conf;
-	
-	# Custom configs
-	include sites-available/{{ site_name }}/server/*;
+  # SSL config
+  include global/https.conf;
 
-	# Locations
-	include locations/*;
+  # Global includes
+{% if site_cache_enabled %}
+  include global/fastcgi-cache.conf;
+{% endif %}
+{% if site_uploads_protection_enabled %}
+  include global/uploads-directory-protection.conf;
+{% endif %}
+{% if site_xmlrpc_protection_enabled %}
+  include global/xmlrpc-protection.conf;
+{% endif %}
 
-	# Prevent access to hidden files
-	location ~* /\.(?!well-known\/) {
-		deny all;
-	}
+  # Custom configs
+  include sites-available/{{ site_name }}/server/*;
 
-	# Prevent access to certain file extensions
-	location ~\.(ini|log|conf|blade.php)$ {
-		deny all;
-	}
+  # Locations
+  include locations/*;
 
-	# Cache purge
-	location /-/purge/ {
-    	include fastcgi.conf;
-    	fastcgi_param SCRIPT_FILENAME /opt/sitepilot/sites/share/purge.php;
-		fastcgi_param SITEPILOT_CACHE_PATH /opt/sitepilot/sites/{{ site_name }}/cache;
-    	fastcgi_pass unix:/run/php/php{{ php_version }}-fpm.sock;
-	}
+  # Prevent access to hidden files
+  location ~* /\.(?!well-known\/) {
+    deny all;
+  }
 
-	# Tools
-	location ~ /-/(ping|phpinfo)/$ {
-		include fastcgi.conf;
-		fastcgi_param SCRIPT_FILENAME /opt/sitepilot/sites/share/$1.php;
-		fastcgi_pass unix:/run/php/php{{ php_version }}-{{ site_name }}.sock;
-	}
+  # Prevent access to certain file extensions
+  location ~\.(ini|log|conf|blade.php)$ {
+    deny all;
+  }
 
-	location / {
-		include global/static-files.conf;
-		try_files $uri $uri/ /index.php?$args;
+  # Cache purge
+  location /-/purge/ {
+    include fastcgi.conf;
+    fastcgi_param SCRIPT_FILENAME /opt/sitepilot/sites/share/purge.php;
+    fastcgi_param SITEPILOT_CACHE_PATH /opt/sitepilot/sites/{{ site_name }}/cache;
+    fastcgi_pass unix:/run/php/php{{ php_version }}-fpm.sock;
+  }
 
-		location ~ \.php$ {
-			try_files $uri =404;
+  # Tools
+  location ~ /-/(ping|phpinfo)/$ {
+    include fastcgi.conf;
+    fastcgi_param SCRIPT_FILENAME /opt/sitepilot/sites/share/$1.php;
+    fastcgi_pass unix:/run/php/php{{ php_version }}-{{ site_name }}.sock;
+  }
 
-			include fastcgi.conf;
-			fastcgi_pass unix:/run/php/php{{ php_version }}-{{ site_name }}.sock;
+  location / {
+    include global/static-files.conf;
+    try_files $uri $uri/ /index.php?$args;
 
-			{% if site_cache_enabled %}
-			fastcgi_cache_bypass $skip_cache;
-			fastcgi_no_cache $skip_cache;
-			fastcgi_cache {{ site_name }};
-			fastcgi_cache_valid 200 301 1d;
-			{% endif %}
+    location ~ \.php$ {
+      try_files $uri =404;
 
-			include sites-available/{{ site_name }}/location/*;
-		}
-	}
+      include fastcgi.conf;
+      fastcgi_pass unix:/run/php/php{{ php_version }}-{{ site_name }}.sock;
+{% if site_cache_enabled %}
+      fastcgi_cache_bypass $skip_cache;
+      fastcgi_no_cache $skip_cache;
+      fastcgi_cache {{ site_name }};
+      fastcgi_cache_valid 200 301 1d;
+{% endif %}
+
+      include sites-available/{{ site_name }}/location/*;
+    }
+  }
 }
 
 server {
-	listen 80;
-	listen [::]:80;
-	server_name {{ site_domains | join(' ') }};
+  listen 80;
+  listen [::]:80;
+  server_name {{ site_domains | join(' ') }};
 
-	return 301 https://$host$request_uri;
+  return 301 https://$host$request_uri;
 }
 
 include sites-available/{{ site_name }}/after/*;

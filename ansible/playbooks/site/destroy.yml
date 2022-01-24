@@ -2,12 +2,12 @@
 - hosts: "{{ host }}"
   roles:
     - role: "../../roles/php"
+    - role: "../../roles/nginx"
   tasks:
     - assert:
         that:
           - php_version is defined
           - site_name is defined
-          - site_user is defined
 
     - name: "destroy nginx configs"
       file:
@@ -23,20 +23,12 @@
     - name: cleanup fpm pools
       include_tasks: includes/cleanup-pool.yml
       vars:
-        action: destroy
+        destroy: true
       loop: "{{ php_versions }}"
 
     - meta: flush_handlers
 
     - name: "destroy site user"
       user:
-        name: "{{ site_user }}"
+        name: "{{ site_name }}"
         state: absent
-      when:
-        - site_name == site_user
-
-  handlers:
-    - name: reload nginx
-      service:
-        name: nginx
-        state: reloaded

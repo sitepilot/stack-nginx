@@ -121,4 +121,13 @@ PasswordAuthentication no
 
 # Allow password authentication for site users
 Match Group site-users
-    PasswordAuthentication yes
+  PasswordAuthentication yes
+
+# Chroot users in the sftp-only group
+Match group sftp-only
+  ChrootDirectory /opt/sitepilot/sites/%u
+  X11Forwarding no
+  AllowTcpForwarding no
+  AllowAgentForwarding no
+  ForceCommand internal-sftp
+  PasswordAuthentication yes

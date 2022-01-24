@@ -1,9 +1,4 @@
 ---
-- name: "filesystem : create site-users group"
-  group:
-    name: site-users
-    state: present
-
 - name: "filesystem : create folders"
   file:
     path: "{{ item }}"
@@ -12,22 +7,27 @@
     owner: root
     group: root
   loop:
+    - "/opt"
+    - "/opt/sitepilot"
     - "/opt/sitepilot/sites"
     - "/opt/sitepilot/services"
 
 - name: "filesystem : setup acl"
   acl:
     path: "{{ item.path }}"
-    entity: site-users
-    etype: group
+    entity: "{{ item.entity }}"
+    etype: "{{ item.etype }}"
     permissions: "{{ item.permissions }}"
+    default: "{{ item.default }}"
     state: present
   loop:
     - path: "/opt"
       permissions: x
-    - path: "/opt/sitepilot"
-      permissions: x
-    - path: "/opt/sitepilot/sites"
-      permissions: x
+      entity: site-users
+      etype: "group"
+      default: false
     - path: "/opt/sitepilot/services"
       permissions: ---
+      entity: site-users
+      etype: "group"
+      default: false

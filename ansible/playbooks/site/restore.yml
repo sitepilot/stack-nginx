@@ -10,7 +10,6 @@
     - assert:
         that:
           - site_name is defined
-          - site_user is defined
           - site_backup_repo is defined
           - site_restore_id is defined
           - site_backup_password is defined
@@ -27,7 +26,7 @@
         RESTIC_PASSWORD: "{{ site_backup_password }}"
       args:
         chdir: "{{ restore_path }}"
-      become_user: "{{ site_user }}"
+      become_user: "{{ site_name }}"
       register: result
 
     - name: "result"

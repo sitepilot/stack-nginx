@@ -6,7 +6,6 @@ php_version: "8.0"
 
 # General
 site_name: test-site-80
-site_user: test-site-80
 site_password: $6$ptYovyNQd$QU.sTQvqPKLkb6xuF/HDGMGnlundvCIBciw9xUTmgVLMEI9aMVgwYDhPwXko4IgEQw6/sQlZVwVZqyKqe6Sx00
 site_domains:
   - test-site-80.sitepilot.local

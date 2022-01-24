@@ -8,14 +8,14 @@
 - include: base.yml
   tags: "base"
 
-- include: filesystem.yml
-  tags: "filesystem"
-
 - include: hostname.yml
   tags: "hostname"
 
 - include: admin.yml
   tags: "admin"
+
+- include: filesystem.yml
+  tags: "filesystem"
 
 - include: sshd.yml
   tags: "sshd"
