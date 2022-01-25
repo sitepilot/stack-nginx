@@ -20,7 +20,6 @@ worker_rlimit_nofile 8192;
 
 events {
   # If you need more connections than this, you start optimizing your OS.
-  # That's probably the point at which you hire people who are smarter than you as this is *a lot* of requests.
   # Should be < worker_rlimit_nofile.
   # Default: 512
   worker_connections 8000;
