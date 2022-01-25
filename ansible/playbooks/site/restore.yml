@@ -26,7 +26,6 @@
         RESTIC_PASSWORD: "{{ site_backup_password }}"
       args:
         chdir: "{{ restore_path }}"
-      become_user: "{{ site_name }}"
       register: result
 
     - name: "result"

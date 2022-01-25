@@ -1,0 +1,23 @@
+---
+- hosts: "{{ host }}"
+  vars:
+    backup_s3_key: ""
+    backup_s3_secret: ""
+  tasks:
+    - package_facts:
+        manager: "auto"
+
+    - assert:
+        that:
+          - backup_repo is defined
+          - backup_snapshot_id is defined
+          - backup_password is defined
+          - "'restic' in ansible_facts.packages"
+
+    - name: "destroy backup"
+      command: "restic -r {{ backup_repo }} forget {{ backup_snapshot_id }}"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ backup_s3_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ backup_s3_secret }}"
+        RESTIC_PASSWORD: "{{ backup_password }}"
+      changed_when: false
