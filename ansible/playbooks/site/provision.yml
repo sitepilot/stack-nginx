@@ -2,6 +2,7 @@
 - hosts: "{{ host }}"
   vars:
     site_ssh_enabled: false
+    site_cache_enabled: false
     site_security_enabled: true
     site_authorized_keys: []
     site_user_groups:
