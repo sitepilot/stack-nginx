@@ -1,6 +1,6 @@
 # {{ ansible_managed }}
 
-fastcgi_cache_path /opt/sitepilot/sites/{{ site_name }}/cache levels=1:2 keys_zone={{ site_name }}:100m inactive=1d;
+fastcgi_cache_path /opt/sitepilot/sites/{{ site_name }}/.cache levels=1:2 keys_zone={{ site_name }}:100m inactive=1d;
 
 include sites-available/{{ site_name }}/before/*;
 
@@ -63,7 +63,7 @@ server {
   location /-/purge/ {
     include fastcgi.conf;
     fastcgi_param SCRIPT_FILENAME /opt/sitepilot/sites/share/purge.php;
-    fastcgi_param SITEPILOT_CACHE_PATH /opt/sitepilot/sites/{{ site_name }}/cache;
+    fastcgi_param SITEPILOT_CACHE_PATH /opt/sitepilot/sites/{{ site_name }}/.cache;
     fastcgi_pass unix:/run/php/php{{ php_version }}-fpm.sock;
   }
 
@@ -77,6 +77,11 @@ server {
   location / {
     include global/static-files.conf;
     try_files $uri $uri/ /index.php?$args;
+
+{% if site_htpasswd | length > 0 %}
+    auth_basic "Restricted Content";
+    auth_basic_user_file /opt/sitepilot/sites/{{ site_name }}/.config/htpasswd;
+{% endif %}
 
     location ~ \.php$ {
       try_files $uri =404;

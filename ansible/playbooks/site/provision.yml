@@ -7,6 +7,7 @@
     site_authorized_keys: []
     site_user_groups:
       - site-users
+    site_htpasswd: ""
   roles:
     - role: "../../roles/php"
     - role: "../../roles/nginx"
@@ -46,19 +47,31 @@
     - name: "create site folders"
       file:
         path: "{{ item.path }}"
-        mode: "0755"
+        mode: "{{ item.mode }}"
         state: directory
         owner: "{{ item.user }}"
-        group: "{{ item.user }}"
+        group: "{{ item.group }}"
       loop:
         - path: "/opt/sitepilot/sites/{{ site_name }}"
           user: root
+          group: root
+          mode: "0755"
         - path: "/opt/sitepilot/sites/{{ site_name }}/logs"
           user: root
+          group: root
+          mode: "0755"
+        - path: "/opt/sitepilot/sites/{{ site_name }}/.config"
+          user: www-data
+          group: root
+          mode: "0700"
         - path: "/opt/sitepilot/sites/{{ site_name }}/files"
           user: "{{ site_name }}"
+          group: "{{ site_name }}"
+          mode: "0755"
         - path: "/opt/sitepilot/sites/{{ site_name }}/home/.local/bin"
           user: "{{ site_name }}"
+          group: "{{ site_name }}"
+          mode: "0755"
 
     - name: "create symlinks"
       file:
@@ -123,27 +136,34 @@
         dest: "/bin/jailshell"
         mode: "0755"
 
-    - name: "configure nginx"
+    - name: "generate config files"
       template:
-        src: templates/nginx.j2
-        dest: "/etc/nginx/sites-available/{{ site_name }}"
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
         mode: "0644"
-      notify: reload nginx
-
-    - name: "configure pool"
-      template:
-        src: templates/pool.j2
-        dest: "/etc/php/{{ php_version }}/fpm/pool.d/{{ site_name }}.conf"
-        mode: "0644"
-      notify: "reload php{{ php_version }}-fpm"
+      loop:
+        - src: "templates/nginx.j2"
+          dest: "/opt/sitepilot/sites/{{ site_name }}/.config/vhost.conf"
+        - src: "templates/pool.j2"
+          dest: "/opt/sitepilot/sites/{{ site_name }}/.config/pool.conf"
+        - src: "templates/htpasswd.j2"
+          dest: "/opt/sitepilot/sites/{{ site_name }}/.config/htpasswd"
+      notify:
+        - "reload nginx"
+        - "reload php{{ php_version }}-fpm"
 
     - name: "enable site"
       file:
-        src: "/etc/nginx/sites-available/{{ site_name }}"
-        dest: "/etc/nginx/sites-enabled/{{ site_name }}"
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
         state: link
         mode: "0644"
       notify: reload nginx
+      loop:
+        - src: "/opt/sitepilot/sites/{{ site_name }}/.config/vhost.conf"
+          dest: "/etc/nginx/sites-enabled/{{ site_name }}"
+        - src: "/opt/sitepilot/sites/{{ site_name }}/.config/pool.conf"
+          dest: "/etc/php/{{ php_version }}/fpm/pool.d/{{ site_name }}.conf"
 
     - name: cleanup fpm pools
       include_tasks: includes/cleanup-pool.yml

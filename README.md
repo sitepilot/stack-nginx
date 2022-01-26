@@ -80,12 +80,11 @@ ansible-playbook -i <inventory-file> ./playbooks/database/destroy.yml -e @resour
 * MariaDB data: `/opt/sitepilot/services/mariadb/data`
 
 ### Site Files
-* Home path: `/opt/sitepilot/sites/{{ site-name }}`
 * Public path: `/opt/sitepilot/sites/{{ site-name }}/files`
 * Logs path: `/opt/sitepilot/sites/{{ site-name }}/logs`
-* Cache path: `/opt/sitepilot/sites/{{ site-name }}/cache`
-* Nginx vhost config: `/etc/nginx/sites-enabled/{{ site-name }}`
-* PHP pool config: `/etc/nginx/sites-enabled/{{ site-name }}`
+* Home path: `/opt/sitepilot/sites/{{ site-name }}/home`
+* Cache path: `/opt/sitepilot/sites/{{ site-name }}/.cache`
+* Config path: `/opt/sitepilot/sites/{{ site-name }}/.config`
 
 ## Author
 
