@@ -34,3 +34,11 @@ if ($request_uri ~* "/wp-admin/|/wp-json/|/xmlrpc.php|wp-.*.php|/feed/|index.php
 if ($http_cookie ~* "comment_author|wordpress_[a-f0-9]+|wp-postpass|wordpress_no_cache|wordpress_logged_in|edd_items_in_cart|woocommerce_items_in_cart") {
   set $skip_cache 1;
 }
+
+# Purge
+location ~* /-/purge/ {
+  include fastcgi.conf;
+  fastcgi_param SITEPILOT_CACHE_PATH $base/.cache;
+  fastcgi_param SCRIPT_FILENAME /opt/sitepilot/sites/share/purge.php;
+  fastcgi_pass unix:/run/php/php${php_version}-fpm.sock;
+}

@@ -68,12 +68,8 @@
       destination: /etc/nginx/global/https.conf
     - template: global/fastcgi-cache.j2
       destination: /etc/nginx/global/fastcgi-cache.conf
-    - template: global/uploads-directory-protection.j2
-      destination: /etc/nginx/global/uploads-directory-protection.conf
-    - template: global/wp-subdirectory.j2
-      destination: /etc/nginx/global/wp-subdirectory.conf
-    - template: global/xmlrpc-protection.j2
-      destination: /etc/nginx/global/xmlrpc-protection.conf
+    - template: global/security.j2
+      destination: /etc/nginx/global/security.conf
     - template: global/static-files.j2
       destination: /etc/nginx/global/static-files.conf
     - template: sites-available/default.j2

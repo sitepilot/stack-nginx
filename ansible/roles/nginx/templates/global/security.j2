@@ -1,0 +1,28 @@
+# Don't allow pages to be rendered in an iframe on external domain
+add_header X-Frame-Options "SAMEORIGIN";
+
+# MIME sniffing prevention
+add_header X-Content-Type-Options "nosniff";
+
+# Enable cross-site scripting filter in supported browsers
+add_header X-Xss-Protection "1; mode=block";
+
+# Deny dotfiles
+location ~* /\.(?!well-known\/) {
+  deny all;
+}
+
+# Deny file extensions
+location ~\.(ini|log|conf|sql)$ {
+  deny all;
+}
+
+# Deny uploaded scripts
+location ~* ^/wp-content/uploads/.*\.(?:s?html?|php|js|swf)$ {
+  deny all;
+}
+
+# Deny WordPress specific files
+location ~* ^/(?:xmlrpc\.php|wp-links-opml\.php|wp-config\.php|wp-config-sample\.php|readme\.html|license\.txt)$ {
+  deny all;
+}

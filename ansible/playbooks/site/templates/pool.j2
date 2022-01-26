@@ -71,6 +71,8 @@ pm.max_spare_servers = 1
 ; Default Value: 0
 pm.max_requests = 500
 
+ping.path = /-/ping/
+
 php_admin_value[mail.log] = '/opt/sitepilot/sites/{{ site_name }}/logs/mail.log'
 php_admin_value[error_log] = '/opt/sitepilot/sites/{{ site_name }}/logs/debug.log'
 

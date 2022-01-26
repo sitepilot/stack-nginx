@@ -2,8 +2,7 @@
 - hosts: "{{ host }}"
   vars:
     site_ssh_enabled: false
-    site_xmlrpc_protection_enabled: false
-    site_uploads_protection_enabled: false
+    site_security_enabled: true
     site_authorized_keys: []
     site_user_groups:
       - site-users
@@ -127,7 +126,7 @@
         src: "files/share"
         dest: /opt/sitepilot/sites
         owner: www-data
-        group: www-data
+        group: root
         mode: "0755"
 
     - name: "generate jailshell script"
@@ -142,7 +141,7 @@
         dest: "{{ item.dest }}"
         mode: "0644"
       loop:
-        - src: "templates/nginx.j2"
+        - src: "templates/vhost.j2"
           dest: "/opt/sitepilot/sites/{{ site_name }}/.config/vhost.conf"
         - src: "templates/pool.j2"
           dest: "/opt/sitepilot/sites/{{ site_name }}/.config/pool.conf"
