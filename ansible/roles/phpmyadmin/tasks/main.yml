@@ -17,7 +17,7 @@
     pull: true
     restart_policy: always
     env:
-      PMA_HOST: mysql
+      PMA_HOST: mariadb
       UPLOAD_LIMIT: 1G
       PMA_ABSOLUTE_URI: "/-/phpmyadmin"
     ports:

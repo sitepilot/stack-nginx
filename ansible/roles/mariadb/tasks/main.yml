@@ -34,8 +34,8 @@
 
 - name: "start container"
   docker_container:
-    name: "mysql"
-    hostname: "mysql"
+    name: "mariadb"
+    hostname: "mariadb"
     image: "mariadb:{{ mariadb_version }}"
     pull: true
     restart_policy: always
