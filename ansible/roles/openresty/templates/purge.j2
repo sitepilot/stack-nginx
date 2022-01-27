@@ -41,7 +41,7 @@ function exec(cmd)
 end
 
 function list_files(cache_path)
-    local result = exec("/usr/bin/find " .. cache_path .. " -type f | /usr/bin/xargs --no-run-if-empty -n1000 /bin/grep -El -m 1 '^KEY: " .. ngx.var.scheme .. 'GET' .. ngx.var.host .. ngx.var.request_uri .. "' 2>&1")
+    local result = exec("/usr/bin/find " .. cache_path .. " -type f | /usr/bin/xargs --no-run-if-empty -n1000 /bin/grep -El -m 1 '^KEY: (.*)" .. ngx.var.request_uri .. "' 2>&1")
     if result == "" then
             return {}
     end
