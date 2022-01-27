@@ -12,15 +12,6 @@
     - role: ../../roles/common
       tags: common
 
-    - role: ../../roles/nginx
-      tags: ["never", "nginx"]
-
-    - role: ../../roles/php
-      tags: ["never", "php"]
-
-    - role: ../../roles/docker
-      tags: ["never", "docker"]
-
     - role: ../../roles/smtp
       tags: smtp
       when: smtp_enabled

@@ -4,26 +4,29 @@
     site_ssh_enabled: false
     site_cache_enabled: false
     site_security_enabled: true
+    site_open_basedir_enabled: false
     site_authorized_keys: []
     site_user_groups:
       - site-users
     site_htpasswd: ""
   roles:
     - role: "../../roles/php"
-    - role: "../../roles/nginx"
+      tags: ["php"]
+      vars:
+        php_version: "{{ site_php_version }}"
+    - role: "../../roles/openresty"
+      tags: ["openresty"]
   tasks:
     - assert:
         that:
-          - php_version is defined
           - site_name is defined
           - site_domains is defined
           - site_password is defined
-      tags: ["user"]
+          - site_php_version is defined
 
     - set_fact:
         site_user_groups: "{{ site_user_groups }} + [ 'sftp-only' ]"
       when: not site_ssh_enabled
-      tags: ["user"]
 
     - name: "create site user"
       user:
@@ -34,7 +37,6 @@
         append: false
         create_home: true
         home: /opt/sitepilot/sites/{{ site_name }}/home
-      tags: ["user"]
 
     - name: "add authorized keys"
       authorized_key:
@@ -42,7 +44,6 @@
         state: "present"
         key: "{{ site_authorized_keys | join('\n') }}"
         exclusive: true
-      tags: ["user"]
 
     - name: "create site folders"
       file:
@@ -84,7 +85,7 @@
           dest: "/opt/sitepilot/sites/{{ site_name }}/home/files"
         - src: "/opt/sitepilot/sites/{{ site_name }}/logs"
           dest: "/opt/sitepilot/sites/{{ site_name }}/home/logs"
-        - src: "/usr/bin/php{{ php_version }}"
+        - src: "/usr/bin/php{{ site_php_version }}"
           dest: "/opt/sitepilot/sites/{{ site_name }}/home/.local/bin/php"
 
     - name: "setup acl"
@@ -122,14 +123,6 @@
           etype: "group"
           default: false
 
-    - name: "copy shared files"
-      copy:
-        src: "files/share"
-        dest: /opt/sitepilot/sites
-        owner: www-data
-        group: root
-        mode: "0755"
-
     - name: "generate jailshell script"
       template:
         src: templates/jailshell.j2
@@ -149,8 +142,8 @@
         - src: "templates/htpasswd.j2"
           dest: "/opt/sitepilot/sites/{{ site_name }}/.config/htpasswd"
       notify:
-        - "reload nginx"
-        - "reload php{{ php_version }}-fpm"
+        - "reload openresty"
+        - "reload php{{ site_php_version }}-fpm"
 
     - name: "enable site"
       file:
@@ -158,12 +151,12 @@
         dest: "{{ item.dest }}"
         state: link
         mode: "0644"
-      notify: reload nginx
+      notify: reload openresty
       loop:
         - src: "/opt/sitepilot/sites/{{ site_name }}/.config/vhost.conf"
-          dest: "/etc/nginx/sites-enabled/{{ site_name }}"
+          dest: "/usr/local/openresty/nginx/conf/sites-enabled/{{ site_name }}"
         - src: "/opt/sitepilot/sites/{{ site_name }}/.config/pool.conf"
-          dest: "/etc/php/{{ php_version }}/fpm/pool.d/{{ site_name }}.conf"
+          dest: "/etc/php/{{ site_php_version }}/fpm/pool.d/{{ site_name }}.conf"
 
     - name: cleanup fpm pools
       include_tasks: includes/cleanup-pool.yml

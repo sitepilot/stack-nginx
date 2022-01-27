@@ -1,3 +1,4 @@
 ---
 dependencies:
-  - nginx
+  - role: openresty
+    tags: ["openresty"]

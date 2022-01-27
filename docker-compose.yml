@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     privileged: true
     ports:
-      - "10080:80"
+      - "10081:80"
       - "10443:443"
       - "10022:22"
     volumes:

@@ -5,14 +5,14 @@
 - assert:
     that:
       - node_exporter_version is defined
-      - "'nginx' in ansible_facts.packages"
+      - "'openresty' in ansible_facts.packages"
 
 - set_fact:
     node_exporter_release_name: "node_exporter-{{ node_exporter_version }}.linux-amd64"
 
 - name: Check that the somefile.conf exists
   stat:
-    path: /opt/sitepilot/services/node-exporter/{{ node_exporter_version }}.tar.gz
+    path: /opt/sitepilot/stack/node-exporter/{{ node_exporter_version }}.tar.gz
   register: installer
 
 - name: "create folders"
@@ -23,27 +23,27 @@
     group: "root"
     mode: "0700"
   loop:
-    - "/opt/sitepilot/services/node-exporter"
-    - "/opt/sitepilot/services/node-exporter/bin"
+    - "/opt/sitepilot/stack/node-exporter"
+    - "/opt/sitepilot/stack/node-exporter/bin"
 
 - name: "download node exporter binary"
   get_url:
     url: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/{{ node_exporter_release_name }}.tar.gz"
-    dest: "/opt/sitepilot/services/node-exporter/{{ node_exporter_version }}.tar.gz"
+    dest: "/opt/sitepilot/stack/node-exporter/{{ node_exporter_version }}.tar.gz"
   notify: restart node-exporter
   when: not installer.stat.exists
 
 - name: "unarchive node exporter binary"
   unarchive:
     copy: false
-    src: "/opt/sitepilot/services/node-exporter/{{ node_exporter_version }}.tar.gz"
+    src: "/opt/sitepilot/stack/node-exporter/{{ node_exporter_version }}.tar.gz"
     dest: "/tmp"
     creates: "/tmp/{{ node_exporter_release_name }}/node_exporter"
   notify: restart node-exporter
   when: not installer.stat.exists
 
-- name: "move binary to services folder"
-  command: mv /tmp/{{ node_exporter_release_name }}/node_exporter /opt/sitepilot/services/node-exporter/bin
+- name: "move binary to stack folder"
+  command: mv /tmp/{{ node_exporter_release_name }}/node_exporter /opt/sitepilot/stack/node-exporter/bin
   changed_when: false
   when: not installer.stat.exists
 
@@ -67,9 +67,9 @@
   with_items:
     - /tmp/{{ node_exporter_release_name }}
 
-- name: "configure nginx"
+- name: "configure openresty"
   template:
     src: nginx.j2
-    dest: /etc/nginx/locations/node-exporter.conf
+    dest: /usr/local/openresty/nginx/conf/locations/node-exporter.conf
     mode: "0644"
-  notify: reload nginx
+  notify: reload openresty
