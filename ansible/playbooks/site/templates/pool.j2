@@ -75,7 +75,7 @@ ping.path = /-/ping/
 
 php_admin_value[mail.log] = '/opt/sitepilot/sites/{{ site_name }}/logs/mail.log'
 php_admin_value[error_log] = '/opt/sitepilot/sites/{{ site_name }}/logs/debug.log'
-{% if site_cache_enabled %}
+{% if site_open_basedir_enabled %}
 php_admin_value[open_basedir] = '/tmp/:/opt/sitepilot/sites/{{ site_name }}/'
 {% endif %}
 
