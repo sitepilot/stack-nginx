@@ -1,4 +1,6 @@
 ---
 dependencies:
-  - docker
-  - openresty
+  - role: docker
+    tags: ["docker"]
+  - role: openresty
+    tags: ["openresty"]

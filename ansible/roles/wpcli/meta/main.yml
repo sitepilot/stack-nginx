@@ -1,3 +1,4 @@
 ---
 dependencies:
-  - php
+  - role: php
+    tags: ["php"]

@@ -12,15 +12,6 @@
     - role: ../../roles/common
       tags: common
 
-    - role: ../../roles/openresty
-      tags: ["never", "openresty"]
-
-    - role: ../../roles/php
-      tags: ["never", "php"]
-
-    - role: ../../roles/docker
-      tags: ["never", "docker"]
-
     - role: ../../roles/smtp
       tags: smtp
       when: smtp_enabled

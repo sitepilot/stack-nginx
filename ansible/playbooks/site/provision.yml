@@ -10,7 +10,9 @@
     site_htpasswd: ""
   roles:
     - role: "../../roles/php"
+      tags: ["php"]
     - role: "../../roles/openresty"
+      tags: ["openresty"]
   tasks:
     - assert:
         that:
@@ -18,12 +20,10 @@
           - site_name is defined
           - site_domains is defined
           - site_password is defined
-      tags: ["user"]
 
     - set_fact:
         site_user_groups: "{{ site_user_groups }} + [ 'sftp-only' ]"
       when: not site_ssh_enabled
-      tags: ["user"]
 
     - name: "create site user"
       user:
@@ -34,7 +34,6 @@
         append: false
         create_home: true
         home: /opt/sitepilot/sites/{{ site_name }}/home
-      tags: ["user"]
 
     - name: "add authorized keys"
       authorized_key:
@@ -42,7 +41,6 @@
         state: "present"
         key: "{{ site_authorized_keys | join('\n') }}"
         exclusive: true
-      tags: ["user"]
 
     - name: "create site folders"
       file:
