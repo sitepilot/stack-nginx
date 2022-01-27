@@ -3,7 +3,7 @@
 user = {{ site_name }}
 group = {{ site_name }}
 
-listen = /run/php/php{{ php_version }}-{{ site_name }}.sock
+listen = /run/php/php{{ site_php_version }}-{{ site_name }}.sock
 listen.owner = {{ site_name }}
 listen.group = www-data
 listen.mode = 0660
@@ -75,6 +75,9 @@ ping.path = /-/ping/
 
 php_admin_value[mail.log] = '/opt/sitepilot/sites/{{ site_name }}/logs/mail.log'
 php_admin_value[error_log] = '/opt/sitepilot/sites/{{ site_name }}/logs/debug.log'
+{% if site_cache_enabled %}
+php_admin_value[open_basedir] = '/opt/sitepilot/sites/{{ site_name }}'
+{% endif %}
 
 env[SITEPILOT_SITE] = '{{ site_name }}'
 env[SITEPILOT_CACHE_ENABLED] = '{{ site_cache_enabled }}'

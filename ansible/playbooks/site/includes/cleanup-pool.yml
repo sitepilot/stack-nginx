@@ -3,5 +3,5 @@
   file:
     path: "/etc/php/{{ item }}/fpm/pool.d/{{ site_name }}.conf"
     state: absent
-  when: (destroy is defined) or (item|string != php_version|string)
+  when: (destroy is defined) or (item|string != site_php_version|string)
   notify: "reload php{{ item }}-fpm"

@@ -9,7 +9,7 @@ server {
   server_name {{ site_domains | join(' ') }};
 
   set $site_name {{ site_name }};
-  set $php_version {{ php_version }};
+  set $site_php_version {{ site_php_version }};
   set $base /opt/sitepilot/sites/{{ site_name }};
   set $static_files_cache 7d;
 
@@ -50,7 +50,7 @@ server {
 
   location ~* /-/ping/ {
     include fastcgi.conf;
-    fastcgi_pass unix:/run/php/php${php_version}-${site_name}.sock;
+    fastcgi_pass unix:/run/php/php${site_php_version}-${site_name}.sock;
   }
 
   # Default location
@@ -74,7 +74,7 @@ server {
       fastcgi_cache {{ site_name }};
       fastcgi_cache_valid 200 301 1d;
   {% endif %}
-      fastcgi_pass unix:/run/php/php${php_version}-${site_name}.sock;
+      fastcgi_pass unix:/run/php/php${site_php_version}-${site_name}.sock;
     }
   }  
 }
