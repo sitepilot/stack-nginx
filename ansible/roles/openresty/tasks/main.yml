@@ -43,6 +43,7 @@
 - name: "generate default key"
   openssl_privatekey:
     path: /usr/local/openresty/nginx/conf/default.key
+  notify: reload openresty
 
 - name: "generate default csr"
   openssl_csr:
@@ -50,6 +51,9 @@
     privatekey_path: /usr/local/openresty/nginx/conf/default.key
     country_name: NL
     organization_name: Sitepilot
+    email_address: "server@sitepilot.local"
+    common_name: "server"
+  notify: reload openresty
 
 - name: "generate default certificate"
   openssl_certificate:
@@ -57,6 +61,7 @@
     privatekey_path: //usr/local/openresty/nginx/conf/default.key
     csr_path: /usr/local/openresty/nginx/conf/default.csr
     provider: selfsigned
+  notify: reload openresty
 
 - name: "generate configuration"
   template:
