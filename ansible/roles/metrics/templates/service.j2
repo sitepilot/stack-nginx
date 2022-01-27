@@ -8,7 +8,7 @@ After=network-online.target
 User=root
 Group=root
 Type=simple
-ExecStart=/opt/sitepilot/services/node-exporter/bin/node_exporter --web.telemetry-path="/-/monitor/metrics/" --web.listen-address=127.0.0.1:9100
+ExecStart=/opt/sitepilot/stack/node-exporter/bin/node_exporter --web.telemetry-path="/-/monitor/metrics/" --web.listen-address=127.0.0.1:9100
 
 [Install]
 WantedBy=multi-user.target

@@ -21,15 +21,13 @@
   loop:
     - PyMySQL
 
-- name: "create service folders"
+- name: "create data folder"
   file:
     path: "{{ item.path }}"
     state: directory
     mode: "{{ item.mode }}"
   loop:
-    - path: "/opt/sitepilot/services/mariadb"
-      mode: "0700"
-    - path: "/opt/sitepilot/services/mariadb/data"
+    - path: "/opt/sitepilot/stack/mariadb/data"
       mode: "0700"
 
 - name: "start container"
@@ -46,7 +44,7 @@
     networks:
       - name: "{{ docker_network_name }}"
     volumes:
-      - "/opt/sitepilot/services/mariadb/data:/var/lib/mysql"
+      - "/opt/sitepilot/stack/mariadb/data:/var/lib/mysql"
     purge_networks: true
     networks_cli_compatible: false
 

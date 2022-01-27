@@ -75,7 +75,7 @@ ansible-playbook -i <inventory-file> ./playbooks/database/destroy.yml -e @resour
 
 * Vhosts: `/usr/local/openresty/nginx/conf/sites-enabled`
 * PHP-FPM pools: `/etc/php/{{ php_version }}/fpm/pool.d`
-* MariaDB data: `/opt/sitepilot/services/mariadb/data`
+* MariaDB data: `/opt/sitepilot/stack/mariadb/data`
 
 ### Site Files
 

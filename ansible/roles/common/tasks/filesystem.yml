@@ -10,7 +10,7 @@
     - "/opt"
     - "/opt/sitepilot"
     - "/opt/sitepilot/sites"
-    - "/opt/sitepilot/services"
+    - "/opt/sitepilot/stack"
 
 - name: "filesystem : setup acl"
   acl:
@@ -26,7 +26,7 @@
       entity: site-users
       etype: "group"
       default: false
-    - path: "/opt/sitepilot/services"
+    - path: "/opt/sitepilot/stack"
       permissions: ---
       entity: site-users
       etype: "group"
