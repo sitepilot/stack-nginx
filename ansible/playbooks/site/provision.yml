@@ -4,6 +4,7 @@
     site_ssh_enabled: false
     site_cache_enabled: false
     site_security_enabled: true
+    site_open_basedir_enabled: false
     site_authorized_keys: []
     site_user_groups:
       - site-users
@@ -11,15 +12,17 @@
   roles:
     - role: "../../roles/php"
       tags: ["php"]
+      vars:
+        php_version: "{{ site_php_version }}"
     - role: "../../roles/openresty"
       tags: ["openresty"]
   tasks:
     - assert:
         that:
-          - php_version is defined
           - site_name is defined
           - site_domains is defined
           - site_password is defined
+          - site_php_version is defined
 
     - set_fact:
         site_user_groups: "{{ site_user_groups }} + [ 'sftp-only' ]"
@@ -82,7 +85,7 @@
           dest: "/opt/sitepilot/sites/{{ site_name }}/home/files"
         - src: "/opt/sitepilot/sites/{{ site_name }}/logs"
           dest: "/opt/sitepilot/sites/{{ site_name }}/home/logs"
-        - src: "/usr/bin/php{{ php_version }}"
+        - src: "/usr/bin/php{{ site_php_version }}"
           dest: "/opt/sitepilot/sites/{{ site_name }}/home/.local/bin/php"
 
     - name: "setup acl"
@@ -140,7 +143,7 @@
           dest: "/opt/sitepilot/sites/{{ site_name }}/.config/htpasswd"
       notify:
         - "reload openresty"
-        - "reload php{{ php_version }}-fpm"
+        - "reload php{{ site_php_version }}-fpm"
 
     - name: "enable site"
       file:
@@ -153,7 +156,7 @@
         - src: "/opt/sitepilot/sites/{{ site_name }}/.config/vhost.conf"
           dest: "/usr/local/openresty/nginx/conf/sites-enabled/{{ site_name }}"
         - src: "/opt/sitepilot/sites/{{ site_name }}/.config/pool.conf"
-          dest: "/etc/php/{{ php_version }}/fpm/pool.d/{{ site_name }}.conf"
+          dest: "/etc/php/{{ site_php_version }}/fpm/pool.d/{{ site_name }}.conf"
 
     - name: cleanup fpm pools
       include_tasks: includes/cleanup-pool.yml
