@@ -1,4 +1,3 @@
-#jinja2: trim_blocks:False
 # {{ ansible_managed }}
 # Configuration File - Nginx Server Configs
 # http://nginx.org/en/docs/dirindex.html
@@ -28,11 +27,7 @@ events {
 # Log errors to this file
 # This is only used when you don't override it on a server{} level
 # Default: logs/error.log error
-error_log /var/log/nginx/error.log error;
-
-# The file storing the process ID of the main process
-# Default: nginx.pid
-pid       /var/run/nginx.pid;
+error_log logs/error.log error;
 
 http {
   # Accept longer domain names
@@ -68,7 +63,7 @@ http {
   # Log access to this file
   # This is only used when you don't override it on a server{} level
   # Default: logs/access.log combined
-  access_log /var/log/nginx/access.log main;
+  access_log logs/access.log main;
 
   # How long to allow each connection to stay idle.
   # Longer values are better for each individual client, particularly for SSL,
@@ -178,6 +173,11 @@ http {
   # for the check. It is best if you enable this in a location{} block for
   # a specific directory, or on an individual server{} level.
   # gzip_static on;
+
+  # Filter headers
+  header_filter_by_lua_block {
+    ngx.header.server = "{{ openresty_server_name }}"
+  }
 
   # Include files in the sites-enabled folder. server{} configuration files should be
   # placed in the sites-available folder, and then the configuration should be enabled

@@ -12,8 +12,8 @@
     - role: ../../roles/common
       tags: common
 
-    - role: ../../roles/nginx
-      tags: ["never", "nginx"]
+    - role: ../../roles/openresty
+      tags: ["never", "openresty"]
 
     - role: ../../roles/php
       tags: ["never", "php"]

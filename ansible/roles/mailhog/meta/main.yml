@@ -1,4 +1,4 @@
 ---
 dependencies:
   - docker
-  - nginx
+  - openresty

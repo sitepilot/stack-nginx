@@ -66,25 +66,36 @@ ansible-playbook -i <inventory-file> ./playbooks/database/destroy.yml -e @resour
 
 ## Web Apps
 
-* Mailhog: `https://{{ site-domain }}/-/mailhog/`
-* phpMyAdmin: `https://{{ site-domain }}/-/phpmyadmin/`
-* Node Exporter: `https://{{ site-domain }}/-/monitor/`
-* PHP info: `https://{{ site-domain }}/-/phpinfo/`
-* Health check: `https://{{ site-domain }}/-/ping/`
-* Cache purge: `https://{{ site-domain }}/-/purge/?url=all`
+* phpMyAdmin: `https://{{ site_domain }}/-/phpmyadmin/`
+* Mailhog: `https://{{ site_domain }}/-/mailhog/`
+* Node Exporter: `https://{{ site_domain }}/-/monitor/`
+* Health check: `https://{{ site_domain }}/-/ping/`
 
 ## Filesystem
 
-* Nginx vhosts: `/etc/nginx/sites-enabled`
-* PHP pools: `/etc/php/{{ php-version }}/fpm/pool.d`
+* Vhosts: `/usr/local/openresty/nginx/conf/sites-enabled`
+* PHP-FPM pools: `/etc/php/{{ php_version }}/fpm/pool.d`
 * MariaDB data: `/opt/sitepilot/services/mariadb/data`
 
 ### Site Files
-* Public path: `/opt/sitepilot/sites/{{ site-name }}/files`
-* Logs path: `/opt/sitepilot/sites/{{ site-name }}/logs`
-* Home path: `/opt/sitepilot/sites/{{ site-name }}/home`
-* Cache path: `/opt/sitepilot/sites/{{ site-name }}/.cache`
-* Config path: `/opt/sitepilot/sites/{{ site-name }}/.config`
+
+* Public path: `/opt/sitepilot/sites/{{ site_name }}/files`
+* Logs path: `/opt/sitepilot/sites/{{ site_name }}/logs`
+* Home path: `/opt/sitepilot/sites/{{ site_name }}/home`
+* Cache path: `/opt/sitepilot/sites/{{ site_name }}/.cache`
+* Config path: `/opt/sitepilot/sites/{{ site_name }}/.config`
+
+## Cache Purge
+
+Send a `PURGE` request to the URL you would like to purge:
+
+```
+# Purge site cache
+curl -X PURGE https://{{ site_domain }}/
+
+# Purge a single post
+curl -X PURGE https://{{ site_domain }}/hello-world/
+```
 
 ## Author
 

@@ -4,7 +4,7 @@
     name: node-exporter
     state: restarted
 
-- name: reload nginx
+- name: reload openresty
   service:
-    name: nginx
+    name: openresty
     state: reloaded

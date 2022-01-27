@@ -10,7 +10,7 @@
     site_htpasswd: ""
   roles:
     - role: "../../roles/php"
-    - role: "../../roles/nginx"
+    - role: "../../roles/openresty"
   tasks:
     - assert:
         that:
@@ -122,14 +122,6 @@
           etype: "group"
           default: false
 
-    - name: "copy shared files"
-      copy:
-        src: "files/share"
-        dest: /opt/sitepilot/sites
-        owner: www-data
-        group: root
-        mode: "0755"
-
     - name: "generate jailshell script"
       template:
         src: templates/jailshell.j2
@@ -149,7 +141,7 @@
         - src: "templates/htpasswd.j2"
           dest: "/opt/sitepilot/sites/{{ site_name }}/.config/htpasswd"
       notify:
-        - "reload nginx"
+        - "reload openresty"
         - "reload php{{ php_version }}-fpm"
 
     - name: "enable site"
@@ -158,10 +150,10 @@
         dest: "{{ item.dest }}"
         state: link
         mode: "0644"
-      notify: reload nginx
+      notify: reload openresty
       loop:
         - src: "/opt/sitepilot/sites/{{ site_name }}/.config/vhost.conf"
-          dest: "/etc/nginx/sites-enabled/{{ site_name }}"
+          dest: "/usr/local/openresty/nginx/conf/sites-enabled/{{ site_name }}"
         - src: "/opt/sitepilot/sites/{{ site_name }}/.config/pool.conf"
           dest: "/etc/php/{{ php_version }}/fpm/pool.d/{{ site_name }}.conf"
 

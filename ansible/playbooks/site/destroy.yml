@@ -7,16 +7,15 @@
         that:
           - site_name is defined
 
-    - name: "destroy nginx configs"
+    - name: "destroy openresty configs"
       file:
         path: "{{ item }}"
         state: absent
       loop:
         - "/opt/sitepilot/sites/{{ site_name }}"
-        - "/etc/nginx/sites-enabled/{{ site_name }}"
-        - "/etc/nginx/sites-available/{{ site_name }}"
+        - "/usr/local/openresty/nginx/conf/sites-enabled/{{ site_name }}"
       notify:
-        - reload nginx
+        - reload openresty
 
     - name: cleanup fpm pools
       include_tasks: includes/cleanup-pool.yml
@@ -33,4 +32,4 @@
 
   handlers:
     - include: "../../roles/php/handlers/main.yml"
-    - include: "../../roles/nginx/handlers/main.yml"
+    - include: "../../roles/openresty/handlers/main.yml"
