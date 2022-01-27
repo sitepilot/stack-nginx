@@ -8,12 +8,13 @@
   apt_repository:
     repo: "deb http://openresty.org/package/{{ ansible_distribution|lower }} {{ ansible_distribution_release }} main"
     state: present
+  register: add_repository
 
 - name: install packages
   apt:
     name: openresty
     state: present
-    update_cache: yes
+    update_cache: "{{ add_repository.changed }}"
   notify: reload openresty
 
 - name: "install python libraries"
