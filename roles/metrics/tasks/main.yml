@@ -4,7 +4,7 @@
 
 - assert:
     that:
-      - node_exporter_version is defined
+      - node_exporter_version | string | length > 0
       - "'openresty' in ansible_facts.packages"
 
 - set_fact:

@@ -4,8 +4,8 @@
 
 - assert:
     that:
-      - mariadb_version is defined
-      - mariadb_root_password is defined
+      - mariadb_version | string | length > 0
+      - mariadb_root_password | length > 0
       - "'docker-ce' in ansible_facts.packages"
 
 - name: "install packages"

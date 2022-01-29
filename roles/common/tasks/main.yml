@@ -1,8 +1,8 @@
 ---
 - assert:
     that:
-      - platform is defined
-      - hostname is defined
+      - platform | length > 0
+      - hostname | length > 0
 
 - include: base.yml
   tags: "base"

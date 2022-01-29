@@ -4,7 +4,7 @@
       - site_name | length > 0
       - site_domains | length > 0
       - site_password | length > 0
-      - site_php_version | length > 0
+      - site_php_version | string | length > 0
 
 - import_role:
     name: php

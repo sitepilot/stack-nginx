@@ -1,7 +1,7 @@
 ---
 - assert:
     that:
-      - php_version is defined
+      - php_version | string | length > 0
 
 - name: "{{ php_version }} : add repository"
   apt_repository:

@@ -1,0 +1,3 @@
+---
+mariadb_version: 10.6
+mariadb_root_password: ""

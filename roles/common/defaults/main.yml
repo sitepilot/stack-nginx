@@ -1,4 +1,6 @@
 ---
+hostname: ""
+platform: "ubuntu-20-04"
 timezone: UTC
 
 firewall_rules:
