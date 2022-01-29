@@ -23,8 +23,5 @@ site_backup_password: ""
 site_backup_s3_key: ""
 site_backup_s3_secret: ""
 
-# Restore
-site_restore_id: latest
-
-# Backup destroy
-site_backup_destroy_id: latest
+# Backup restore / destroy snapshot ID
+site_backup_id: latest

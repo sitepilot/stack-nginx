@@ -5,7 +5,7 @@
 - assert:
     that:
       - site_name | length > 0
-      - site_restore_id | length > 0
+      - site_backup_id | length > 0
       - site_backup_repo | length > 0
       - site_backup_password | length > 0
       - "'restic' in ansible_facts.packages"
@@ -14,7 +14,7 @@
     restore_path: "/opt/sitepilot/sites/{{ site_name }}"
 
 - name: "restore site files"
-  command: "restic -r {{ site_backup_repo }} restore {{ site_restore_id }} --target ."
+  command: "restic -r {{ site_backup_repo }} restore {{ site_backup_id }} --target ."
   environment:
     AWS_ACCESS_KEY_ID: "{{ site_backup_s3_key }}"
     AWS_SECRET_ACCESS_KEY: "{{ site_backup_s3_secret }}"
