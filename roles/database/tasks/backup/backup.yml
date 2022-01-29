@@ -1,0 +1,63 @@
+---
+- package_facts:
+    manager: "auto"
+
+- assert:
+    that:
+      - database_name | length > 0
+      - database_backup_repo | length > 0
+      - database_backup_tag | length > 0
+      - database_backup_password | length > 0
+      - "'restic' in ansible_facts.packages"
+
+- set_fact:
+    backup_path: "/opt/sitepilot/backups/{{ database_name }}"
+    backup_file: "/opt/sitepilot/backups/{{ database_name }}/{{ database_name }}.sql"
+
+- name: "create backups folder"
+  file:
+    path: "{{ backup_path }}"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: "0700"
+    recurse: true
+
+- name: "initialize backup repository"
+  command: "restic -r {{ database_backup_repo }} init"
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ database_backup_s3_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ database_backup_s3_secret }}"
+    RESTIC_PASSWORD: "{{ database_backup_password }}"
+  register: command_result
+  failed_when: "(command_result.stderr | length > 0) and ('config file already exists' not in command_result.stderr)"
+  changed_when: false
+
+- name: "create database dump"
+  mysql_db:
+    state: dump
+    name: "{{ database_name }}"
+    target: "{{ backup_file }}"
+    config_file: "/root/.my.cnf"
+    single_transaction: true
+    login_host: "127.0.0.1"
+
+- name: "backup database dump to repository"
+  command: "restic -r {{ database_backup_repo }} --tag {{ database_backup_tag }} --json backup ."
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ database_backup_s3_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ database_backup_s3_secret }}"
+    RESTIC_PASSWORD: "{{ database_backup_password }}"
+  args:
+    chdir: "{{ backup_path }}"
+  register: result
+  changed_when: false
+
+- name: "remove database dump"
+  file:
+    state: absent
+    path: "{{ backup_path }}"
+
+- name: "result"
+  debug:
+    msg: "{{ result.stdout_lines | last }}"

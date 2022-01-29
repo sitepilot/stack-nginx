@@ -1,0 +1,181 @@
+---
+- assert:
+    that:
+      - site_name | length > 0
+      - site_domains | length > 0
+      - site_password | length > 0
+      - site_php_version | length > 0
+
+- import_role:
+    name: php
+  vars:
+    php_version: "{{ site_php_version }}"
+  tags: php
+
+- import_role:
+    name: openresty
+  tags: openresty
+
+- name: "create site-users group"
+  group:
+    name: site-users
+    state: present
+
+- name: "create sftp-only group"
+  group:
+    name: sftp-only
+    state: present
+  when: not site_ssh_enabled
+
+- set_fact:
+    site_user_groups: "{{ site_user_groups }} + [ 'sftp-only' ]"
+  when: not site_ssh_enabled
+
+- name: "create site user"
+  user:
+    name: "{{ site_name }}"
+    password: "{{ site_password }}"
+    groups: "{{ site_user_groups }}"
+    shell: "{{ site_shell }}"
+    append: false
+    create_home: true
+    home: /opt/sitepilot/sites/{{ site_name }}/home
+
+- name: "add authorized keys"
+  authorized_key:
+    user: "{{ site_name }}"
+    state: "present"
+    key: "{{ site_authorized_keys | join('\n') }}"
+    exclusive: true
+
+- name: "create site folders"
+  file:
+    path: "{{ item.path }}"
+    mode: "{{ item.mode }}"
+    state: directory
+    owner: "{{ item.user }}"
+    group: "{{ item.group }}"
+  loop:
+    - path: "/opt/sitepilot/sites/{{ site_name }}"
+      user: root
+      group: root
+      mode: "0755"
+    - path: "/opt/sitepilot/sites/{{ site_name }}/logs"
+      user: root
+      group: root
+      mode: "0755"
+    - path: "/opt/sitepilot/sites/{{ site_name }}/files"
+      user: "{{ site_name }}"
+      group: "{{ site_name }}"
+      mode: "0755"
+    - path: "/opt/sitepilot/sites/{{ site_name }}/.config"
+      user: www-data
+      group: root
+      mode: "0700"
+    - path: "/opt/sitepilot/sites/{{ site_name }}/home/.local/bin"
+      user: "{{ site_name }}"
+      group: "{{ site_name }}"
+      mode: "0755"
+
+- name: "create home symlinks"
+  file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+    mode: "0755"
+  loop:
+    - src: "/opt/sitepilot/sites/{{ site_name }}/files"
+      dest: "/opt/sitepilot/sites/{{ site_name }}/home/files"
+    - src: "/opt/sitepilot/sites/{{ site_name }}/logs"
+      dest: "/opt/sitepilot/sites/{{ site_name }}/home/logs"
+    - src: "/usr/bin/php{{ site_php_version }}"
+      dest: "/opt/sitepilot/sites/{{ site_name }}/home/.local/bin/php"
+
+- name: "setup acl"
+  acl:
+    path: "{{ item.path }}"
+    entity: "{{ item.entity }}"
+    etype: "{{ item.etype }}"
+    permissions: "{{ item.permissions }}"
+    state: present
+    default: "{{ item.default }}"
+  loop:
+    - path: "/opt/sitepilot/sites/{{ site_name }}"
+      permissions: rx
+      entity: "{{ site_name }}"
+      etype: "user"
+      default: false
+    - path: "/opt/sitepilot/sites/{{ site_name }}/files"
+      permissions: rwx
+      entity: "{{ site_name }}"
+      etype: "user"
+      default: true
+    - path: "/opt/sitepilot/sites"
+      permissions: x
+      entity: "site-users"
+      etype: "group"
+      default: false
+    - path: "/opt/sitepilot/sites/{{ site_name }}"
+      permissions: ---
+      entity: "site-users"
+      etype: "group"
+      default: false
+    - path: "/usr/local/openresty"
+      permissions: ---
+      entity: "site-users"
+      etype: "group"
+      default: false
+    - path: "/etc/php/{{ php_version }}/fpm/pool.d"
+      permissions: ---
+      entity: "site-users"
+      etype: "group"
+      default: false
+    - path: "/opt/sitepilot/sites/{{ site_name }}/files"
+      permissions: rwx
+      entity: "sudo"
+      etype: "group"
+      default: false
+    - path: "/opt/sitepilot/sites/{{ site_name }}/files"
+      permissions: rwx
+      entity: "sudo"
+      etype: "group"
+      default: true
+
+- name: "generate jailshell script"
+  template:
+    src: jailshell.j2
+    dest: "/bin/jailshell"
+    mode: "0755"
+
+- name: "generate config files"
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "0644"
+  loop:
+    - src: "vhost.j2"
+      dest: "/opt/sitepilot/sites/{{ site_name }}/.config/vhost.conf"
+    - src: "pool.j2"
+      dest: "/opt/sitepilot/sites/{{ site_name }}/.config/pool.conf"
+    - src: "htpasswd.j2"
+      dest: "/opt/sitepilot/sites/{{ site_name }}/.config/htpasswd"
+  notify:
+    - "reload openresty"
+    - "reload php{{ site_php_version }}-fpm"
+
+- name: "enable site"
+  file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+    mode: "0644"
+  notify: reload openresty
+  loop:
+    - src: "/opt/sitepilot/sites/{{ site_name }}/.config/vhost.conf"
+      dest: "/usr/local/openresty/nginx/conf/sites-enabled/{{ site_name }}"
+    - src: "/opt/sitepilot/sites/{{ site_name }}/.config/pool.conf"
+      dest: "/etc/php/{{ site_php_version }}/fpm/pool.d/{{ site_name }}.conf"
+
+- name: cleanup fpm pools
+  include_tasks: includes/cleanup-pool.yml
+  loop: "{{ site_php_versions }}"

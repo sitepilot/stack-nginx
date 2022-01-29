@@ -1,0 +1,22 @@
+---
+- assert:
+    that:
+      - user_name | length > 0
+      - user_password | length > 0
+
+- name: "create user"
+  user:
+    name: "{{ user_name }}"
+    password: "{{ user_password }}"
+    groups: "{{ user_groups }}"
+    append: true
+    create_home: true
+    shell: "{{ user_shell }}"
+
+- name: "add authorized keys"
+  authorized_key:
+    user: "{{ user_name }}"
+    state: "present"
+    key: "{{ user_authorized_keys | join('\n') }}"
+    exclusive: true
+  when: user_authorized_keys | length > 0

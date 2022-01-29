@@ -1,0 +1,30 @@
+---
+# General
+site_name: ""
+site_password: ""
+site_php_version: "8.0"
+site_domains: []
+site_ssh_enabled: false
+site_cache_enabled: false
+site_security_enabled: true
+site_open_basedir_enabled: false
+site_authorized_keys: []
+site_shell: /bin/jailshell
+site_user_groups:
+  - site-users
+
+# Basic auth
+site_htpasswd: ""
+
+# Backup
+site_backup_repo: ""
+site_backup_tag: "site"
+site_backup_password: ""
+site_backup_s3_key: ""
+site_backup_s3_secret: ""
+
+# Restore
+site_restore_id: latest
+
+# Backup destroy
+site_backup_destroy_id: latest

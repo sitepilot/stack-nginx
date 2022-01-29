@@ -1,0 +1,23 @@
+---
+- package_facts:
+    manager: "auto"
+
+- assert:
+    that:
+      - database_name | length > 0
+      - database_backup_repo | length > 0
+      - database_backup_password | length > 0
+      - "'restic' in ansible_facts.packages"
+
+- name: "get database snapshots"
+  command: "restic -r {{ database_backup_repo }} --json snapshots"
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ database_backup_s3_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ database_backup_s3_secret }}"
+    RESTIC_PASSWORD: "{{ database_backup_password }}"
+  register: result
+  changed_when: false
+
+- name: "result"
+  debug:
+    msg: "{{ result.stdout_lines | last }}"

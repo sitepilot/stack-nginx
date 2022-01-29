@@ -1,0 +1,10 @@
+---
+- assert:
+    that:
+      - user_name | length > 0
+
+- name: "destroy user"
+  user:
+    name: "{{ user_name }}"
+    state: absent
+    remove: true

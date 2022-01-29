@@ -1,0 +1,23 @@
+---
+- package_facts:
+    manager: "auto"
+
+- assert:
+    that:
+      - site_backup_repo is defined
+      - site_backup_destroy_id is defined
+      - site_backup_password is defined
+      - "'restic' in ansible_facts.packages"
+
+- name: "destroy backup"
+  command: "restic -r {{ site_backup_repo }} forget {{ site_backup_destroy_id }}"
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ site_backup_s3_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ site_backup_s3_secret }}"
+    RESTIC_PASSWORD: "{{ site_backup_password }}"
+  changed_when: false
+  register: result
+
+- name: "result"
+  debug:
+    msg: "{{ result.stdout_lines | last }}"
