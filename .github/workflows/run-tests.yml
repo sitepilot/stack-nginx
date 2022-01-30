@@ -35,27 +35,27 @@ jobs:
 
       - name: Test server playbooks
         run: |
-          ansible-playbook playbooks/server.yml -e host=test-server
+          ansible-playbook server.yml -e host=test-server
 
       - name: Test user playbooks
         run: |
-          ansible-playbook playbooks/user.yml -e @tests/users/test-user.yml
-          ansible-playbook playbooks/user.yml -e @tests/users/test-user.yml -t destroy
+          ansible-playbook user.yml -e @tests/users/test-user.yml
+          ansible-playbook user.yml -e @tests/users/test-user.yml -t destroy
 
       - name: Test site playbooks
         run: |
-          ansible-playbook playbooks/site.yml -e @tests/sites/test-site-80.yml
-          ansible-playbook playbooks/site.yml -e @tests/sites/test-site-80.yml -t backup
-          ansible-playbook playbooks/site.yml -e @tests/sites/test-site-80.yml -t backup/list
-          ansible-playbook playbooks/site.yml -e @tests/sites/test-site-80.yml -t backup/restore
-          ansible-playbook playbooks/site.yml -e @tests/sites/test-site-80.yml -t backup/destroy
-          ansible-playbook playbooks/site.yml -e @tests/sites/test-site-80.yml -t destroy
+          ansible-playbook site.yml -e @tests/sites/test-site-80.yml
+          ansible-playbook site.yml -e @tests/sites/test-site-80.yml -t backup
+          ansible-playbook site.yml -e @tests/sites/test-site-80.yml -t backup/list
+          ansible-playbook site.yml -e @tests/sites/test-site-80.yml -t backup/restore
+          ansible-playbook site.yml -e @tests/sites/test-site-80.yml -t backup/destroy
+          ansible-playbook site.yml -e @tests/sites/test-site-80.yml -t destroy
 
       - name: Test database playbooks
         run: |
-          ansible-playbook playbooks/database.yml -e @tests/databases/test-database.yml
-          ansible-playbook playbooks/database.yml -e @tests/databases/test-database.yml -t backup
-          ansible-playbook playbooks/database.yml -e @tests/databases/test-database.yml -t backup/list
-          ansible-playbook playbooks/database.yml -e @tests/databases/test-database.yml -t backup/restore
-          ansible-playbook playbooks/database.yml -e @tests/databases/test-database.yml -t backup/destroy
-          ansible-playbook playbooks/database.yml -e @tests/databases/test-database.yml -t destroy
+          ansible-playbook database.yml -e @tests/databases/test-database.yml
+          ansible-playbook database.yml -e @tests/databases/test-database.yml -t backup
+          ansible-playbook database.yml -e @tests/databases/test-database.yml -t backup/list
+          ansible-playbook database.yml -e @tests/databases/test-database.yml -t backup/restore
+          ansible-playbook database.yml -e @tests/databases/test-database.yml -t backup/destroy
+          ansible-playbook database.yml -e @tests/databases/test-database.yml -t destroy

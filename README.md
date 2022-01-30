@@ -17,7 +17,7 @@ Before you can provision a [resource](#resources) you've to provision a server f
 Example:
 ```bash
 # Provision a server (or group)
-ansible-playbook playbooks/server/provision.yml -e host=<server>
+ansible-playbook server.yml -e host=<server>
 ```
 
 ## Resources
@@ -26,7 +26,7 @@ Resource playbooks use variables defined in a resource file, add your resources 
 
 ```bash
 # Example
-ansible-playbook playbooks/site.yml -e @resources/sites/my-site.yml
+ansible-playbook site.yml -e @resources/sites/my-site.yml
 ```
 
 Available resource variables are defined in the `defaults` folder of a resource [role](./roles) and validated in the first `assert` task of each tasks file.
@@ -39,54 +39,54 @@ Available resource variables are defined in the `defaults` folder of a resource 
 
 ```bash
 # Provision a site
-ansible-playbook playbooks/site.yml -e @resources/sites/my-site.yml
+ansible-playbook site.yml -e @resources/sites/my-site.yml
 
 # Backup a site
-ansible-playbook playbooks/site.yml -e @resources/sites/my-site.yml -t backup
+ansible-playbook site.yml -e @resources/sites/my-site.yml -t backup
 
 # List site backups
-ansible-playbook playbooks/site.yml -e @resources/sites/my-site.yml -t backup/list
+ansible-playbook site.yml -e @resources/sites/my-site.yml -t backup/list
 
 # Restore site backup
-ansible-playbook playbooks/site.yml -e @resources/sites/my-site.yml -t backup/restore
+ansible-playbook site.yml -e @resources/sites/my-site.yml -t backup/restore
 
 # Destroy site backup
-ansible-playbook playbooks/site.yml -e @resources/sites/my-site.yml -t backup/destroy
+ansible-playbook site.yml -e @resources/sites/my-site.yml -t backup/destroy
 
 # Destroy a site
-ansible-playbook playbooks/site.yml -e @resources/sites/my-site.yml -t destroy
+ansible-playbook site.yml -e @resources/sites/my-site.yml -t destroy
 ```
 
 ### Database
 
 ```bash
 # Provision a database
-ansible-playbook playbooks/database.yml -e @resources/databases/my-database.yml
+ansible-playbook database.yml -e @resources/databases/my-database.yml
 
 # Backup a database
-ansible-playbook playbooks/database.yml -e @resources/databases/my-database.yml -t backup
+ansible-playbook database.yml -e @resources/databases/my-database.yml -t backup
 
 # List database backups
-ansible-playbook playbooks/database.yml -e @resources/databases/my-database.yml -t backup/list
+ansible-playbook database.yml -e @resources/databases/my-database.yml -t backup/list
 
 # Restore database backup
-ansible-playbook playbooks/database.yml -e @resources/databases/my-database.yml -t backup/restore
+ansible-playbook database.yml -e @resources/databases/my-database.yml -t backup/restore
 
 # Destroy database backup
-ansible-playbook playbooks/database.yml -e @resources/databases/my-database.yml -t backup/destroy
+ansible-playbook database.yml -e @resources/databases/my-database.yml -t backup/destroy
 
 # Destroy a database
-ansible-playbook playbooks/database.yml -e @resources/databases/my-database.yml -t destroy
+ansible-playbook database.yml -e @resources/databases/my-database.yml -t destroy
 ```
 
 ### User
 
 ```bash
 # Provision a user
-ansible-playbook playbooks/user.yml -e @resources/users/my-user.yml
+ansible-playbook user.yml -e @resources/users/my-user.yml
 
 # Destroy a user
-ansible-playbook playbooks/user.yml -e @resources/users/my-user.yml -t destroy
+ansible-playbook user.yml -e @resources/users/my-user.yml -t destroy
 ```
 
 ## Web Apps
