@@ -1,5 +1,5 @@
 ---
-user_hosts: test-server
+host: test-server
 
 user_name: test-user
 user_password: $2y$10$kit1fHeGNDnQmkM.BA62kubip04TUNLRQYl1EJPNawJhNgOrniP5G # secret

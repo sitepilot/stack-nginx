@@ -1,4 +1,4 @@
 ---
-- hosts: "{{ user_hosts }}"
+- hosts: "{{ host }}"
   roles:
     - role: user

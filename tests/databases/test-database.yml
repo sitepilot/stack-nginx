@@ -1,5 +1,5 @@
 ---
-database_hosts: test-server
+host: test-server
 
 # General
 database_name: test_database

@@ -1,5 +1,5 @@
 ---
-site_hosts: test-server
+host: test-server
 
 # General
 site_name: test-site-81
