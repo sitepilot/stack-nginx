@@ -4,7 +4,7 @@
   tasks:
     - name: ensure host is defined
       fail:
-        msg: "Host variable is missing. Use `-e` to define `host`: ansible-playbook playbooks/server/provision.yml -e host=<host-or-group-name>"
+        msg: "Host variable is missing. Use `-e` to define `host`: ansible-playbook server.yml -e host=<host-or-group-name>"
       when: host is not defined
       tags: [variable-check]
 
