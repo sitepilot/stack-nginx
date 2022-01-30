@@ -10,66 +10,91 @@ Ansible playbooks for provisioning optimized web servers for WordPress and Larav
 * Ansible
 * Ubuntu 20.04 LTS (Desktop/Server)
 
-## Playbooks
+## Inventory
 
-Playbooks use variables defined in a resource file, add your resources to the `resources` folder and reference the file while running a playbook. You can find resource examples in the [tests](./tests) folder.
+Before you can provision a [resource](#resources) you've to provision a server first. Add your inventory to the [hosts](./hosts) folder and provision a server or group using the following command:
 
 Example:
 ```bash
-ansible-playbook -i ./inventory ./ansible/playbooks/server/provision.yml -e @resources/servers/my-servers.yml
+# Provision a server (or group)
+ansible-playbook playbooks/server/provision.yml -e host=<server>
 ```
 
-### Server
+## Resources
+
+Resource playbooks use variables defined in a resource file, add your resources to the [resources](./resources) folder and reference the file while running a playbook. You can find resource examples in the [tests](./tests) folder.
 
 ```bash
-# Provision a server: 
-ansible-playbook -i ./inventory ./ansible/playbooks/server/provision.yml -e @resources/servers/<servers-name>.yml
+# Example
+ansible-playbook playbooks/site.yml -e @resources/sites/my-site.yml
 ```
+
+Available resource variables are defined in the `defaults` folder of a resource [role](./roles) and validated in the first `assert` task of each tasks file.
+
+* Site variables: [./roles/site/defaults/main.yml](./roles/site/defaults/main.yml)
+* User variables: [./roles/user/defaults/main.yml](./roles/user/defaults/main.yml)
+* Database variables: [./roles/database/defaults/main.yml](./roles/database/defaults/main.yml)
 
 ### Site
 
 ```bash
-# Provision a site: 
-ansible-playbook -i <inventory-file> ./playbooks/site/provision.yml -e @resources/sites/<site-name>.yml
+# Provision a site
+ansible-playbook playbooks/site.yml -e @resources/sites/my-site.yml
 
-# Backup a site:
-ansible-playbook -i <inventory-file> ./playbooks/site/backup.yml -e @resources/sites/<site-name>.yml
+# Backup a site
+ansible-playbook playbooks/site.yml -e @resources/sites/my-site.yml -t backup
 
-# Restore a site: 
-ansible-playbook -i <inventory-file> ./playbooks/site/restore.yml -e @resources/sites/<site-name>.yml
+# List site backups
+ansible-playbook playbooks/site.yml -e @resources/sites/my-site.yml -t backup/list
 
-# List backups for a site: 
-ansible-playbook -i <inventory-file> ./playbooks/site/list-backups.yml -e @resources/sites/<site-name>.yml
+# Restore site backup
+ansible-playbook playbooks/site.yml -e @resources/sites/my-site.yml -t backup/restore
 
-# Destroy a site: 
-ansible-playbook -i <inventory-file> ./playbooks/site/destroy.yml -e @resources/sites/<site-name>.yml
+# Destroy site backup
+ansible-playbook playbooks/site.yml -e @resources/sites/my-site.yml -t backup/destroy
+
+# Destroy a site
+ansible-playbook playbooks/site.yml -e @resources/sites/my-site.yml -t destroy
 ```
 
 ### Database
 
 ```bash
-# Provision a database: 
-ansible-playbook -i <inventory-file> ./playbooks/database/provision.yml -e @resources/databases/<database-name>.yml
+# Provision a database
+ansible-playbook playbooks/database.yml -e @resources/databases/my-database.yml
 
-# Backup a database:
-ansible-playbook -i <inventory-file> ./playbooks/database/backup.yml -e @resources/databases/<database-name>.yml
+# Backup a database
+ansible-playbook playbooks/database.yml -e @resources/databases/my-database.yml -t backup
 
-# Restore a database: 
-ansible-playbook -i <inventory-file> ./playbooks/database/restore.yml -e @resources/databases/<database-name>.yml
+# List database backups
+ansible-playbook playbooks/database.yml -e @resources/databases/my-database.yml -t backup/list
 
-# List backups for a database: 
-ansible-playbook -i <inventory-file> ./playbooks/database/list-backups.yml -e @resources/databases/<database-name>.yml
+# Restore database backup
+ansible-playbook playbooks/database.yml -e @resources/databases/my-database.yml -t backup/restore
 
-# Destroy a database: 
-ansible-playbook -i <inventory-file> ./playbooks/database/destroy.yml -e @resources/databases/<database-name>.yml
+# Destroy database backup
+ansible-playbook playbooks/database.yml -e @resources/databases/my-database.yml -t backup/destroy
+
+# Destroy a database
+ansible-playbook playbooks/database.yml -e @resources/databases/my-database.yml -t destroy
+```
+
+### User
+
+```bash
+# Provision a user
+ansible-playbook playbooks/user.yml -e @resources/users/my-user.yml
+
+# Destroy a user
+ansible-playbook playbooks/user.yml -e @resources/users/my-user.yml -t destroy
 ```
 
 ## Web Apps
 
+* Health check: `https://{{ site_domain }}/-/ping/`
 * phpMyAdmin: `https://{{ site_domain }}/-/phpmyadmin/`
 * Mailhog: `https://{{ site_domain }}/-/mailhog/`
 * Node Exporter: `https://{{ site_domain }}/-/monitor/`
-* Health check: `https://{{ site_domain }}/-/ping/`
 
 ## Filesystem
 
@@ -81,9 +106,9 @@ ansible-playbook -i <inventory-file> ./playbooks/database/destroy.yml -e @resour
 
 * Public path: `/opt/sitepilot/sites/{{ site_name }}/files`
 * Logs path: `/opt/sitepilot/sites/{{ site_name }}/logs`
-* Home path: `/opt/sitepilot/sites/{{ site_name }}/home`
 * Cache path: `/opt/sitepilot/sites/{{ site_name }}/.cache`
 * Config path: `/opt/sitepilot/sites/{{ site_name }}/.config`
+* User home path: `/opt/sitepilot/sites/{{ site_name }}/home`
 
 ## Cache Purge
 

@@ -1,0 +1,15 @@
+---
+# General
+database_name: ""
+database_user: ""
+database_password: ""
+
+# Backup
+database_backup_repo: ""
+database_backup_password: ""
+database_backup_tag: ""
+database_backup_s3_key: ""
+database_backup_s3_secret: ""
+
+# Backup restore / destroy snapshot ID
+database_backup_id: latest

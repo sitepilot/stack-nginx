@@ -1,0 +1,4 @@
+---
+# Supported versions are defined in ../vars/main.yml
+mariadb_version: ""
+mariadb_root_password: ""

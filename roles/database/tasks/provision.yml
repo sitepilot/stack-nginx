@@ -1,0 +1,22 @@
+---
+- assert:
+    that:
+      - database_user | length > 0
+      - database_name | length > 0
+      - database_password | length > 0
+
+- name: "create database {{ database_name }}"
+  mysql_db:
+    name: "{{ database_name }}"
+    state: "present"
+    config_file: "/root/.my.cnf"
+
+- name: "create database user {{ database_user }}"
+  mysql_user:
+    name: "{{ database_user }}"
+    password: "{{ database_password }}"
+    priv: "{{ database_name }}.*:ALL"
+    state: present
+    host: "%"
+    config_file: "/root/.my.cnf"
+  no_log: true

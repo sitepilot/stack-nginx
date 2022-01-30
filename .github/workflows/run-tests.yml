@@ -25,7 +25,7 @@ jobs:
           pip3 install -r ./requirements.txt
 
       - name: Lint Ansible files
-        run: ansible-lint ./ansible
+        run: ansible-lint ./roles
 
       - name: Start test container
         run: |
@@ -35,20 +35,27 @@ jobs:
 
       - name: Test server playbooks
         run: |
-          ansible-playbook -i ./inventory ./ansible/playbooks/server/provision.yml -e @tests/servers/test-server.yml
+          ansible-playbook playbooks/server.yml -e host=test-server
+
+      - name: Test user playbooks
+        run: |
+          ansible-playbook playbooks/user.yml -e @tests/users/test-user.yml
+          ansible-playbook playbooks/user.yml -e @tests/users/test-user.yml -t destroy
 
       - name: Test site playbooks
         run: |
-          ansible-playbook -i ./inventory ./ansible/playbooks/site/provision.yml -e @tests/sites/test-site-80.yml
-          ansible-playbook -i ./inventory ./ansible/playbooks/site/backup.yml -e @tests/sites/test-site-80.yml
-          ansible-playbook -i ./inventory ./ansible/playbooks/site/restore.yml -e @tests/sites/test-site-80.yml
-          ansible-playbook -i ./inventory ./ansible/playbooks/site/list-backups.yml -e @tests/sites/test-site-80.yml
-          ansible-playbook -i ./inventory ./ansible/playbooks/site/destroy.yml -e @tests/sites/test-site-80.yml
+          ansible-playbook playbooks/site.yml -e @tests/sites/test-site-80.yml
+          ansible-playbook playbooks/site.yml -e @tests/sites/test-site-80.yml -t backup
+          ansible-playbook playbooks/site.yml -e @tests/sites/test-site-80.yml -t backup/list
+          ansible-playbook playbooks/site.yml -e @tests/sites/test-site-80.yml -t backup/restore
+          ansible-playbook playbooks/site.yml -e @tests/sites/test-site-80.yml -t backup/destroy
+          ansible-playbook playbooks/site.yml -e @tests/sites/test-site-80.yml -t destroy
 
       - name: Test database playbooks
         run: |
-          ansible-playbook -i ./inventory ./ansible/playbooks/database/provision.yml -e @tests/databases/test-database.yml
-          ansible-playbook -i ./inventory ./ansible/playbooks/database/backup.yml -e @tests/databases/test-database.yml
-          ansible-playbook -i ./inventory ./ansible/playbooks/database/restore.yml -e @tests/databases/test-database.yml
-          ansible-playbook -i ./inventory ./ansible/playbooks/database/list-backups.yml -e @tests/databases/test-database.yml
-          ansible-playbook -i ./inventory ./ansible/playbooks/database/destroy.yml -e @tests/databases/test-database.yml
+          ansible-playbook playbooks/database.yml -e @tests/databases/test-database.yml
+          ansible-playbook playbooks/database.yml -e @tests/databases/test-database.yml -t backup
+          ansible-playbook playbooks/database.yml -e @tests/databases/test-database.yml -t backup/list
+          ansible-playbook playbooks/database.yml -e @tests/databases/test-database.yml -t backup/restore
+          ansible-playbook playbooks/database.yml -e @tests/databases/test-database.yml -t backup/destroy
+          ansible-playbook playbooks/database.yml -e @tests/databases/test-database.yml -t destroy

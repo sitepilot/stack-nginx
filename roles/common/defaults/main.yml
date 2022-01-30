@@ -1,0 +1,12 @@
+---
+hostname: ""
+platform: "ubuntu-20-04"
+timezone: UTC
+
+firewall_rules:
+  - port: 80
+    comment: "http"
+  - port: 443
+    comment: "https"
+  - port: 22
+    comment: "ssh"

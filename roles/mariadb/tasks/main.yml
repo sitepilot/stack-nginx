@@ -1,0 +1,64 @@
+---
+- package_facts:
+    manager: "auto"
+
+- assert:
+    that:
+      - mariadb_version | string | length > 0
+      - mariadb_root_password | length > 0
+      - "'{{ mariadb_version }}' in mariadb_versions"
+      - "'docker-ce' in ansible_facts.packages"
+
+- name: "install packages"
+  apt:
+    name:
+      - mariadb-client
+    state: present
+
+- name: "install python packages"
+  pip:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - PyMySQL
+
+- name: "create data folder"
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: "{{ item.mode }}"
+  loop:
+    - path: "/opt/sitepilot/stack/mariadb/data"
+      mode: "0700"
+
+- name: "start container"
+  docker_container:
+    name: "mariadb"
+    hostname: "mariadb"
+    image: "mariadb:{{ mariadb_version }}"
+    pull: true
+    restart_policy: always
+    env:
+      MARIADB_ROOT_PASSWORD: "{{ mariadb_root_password }}"
+    ports:
+      - "3306:3306"
+    networks:
+      - name: "{{ docker_network_name }}"
+    volumes:
+      - "/opt/sitepilot/stack/mariadb/data:/var/lib/mysql"
+    purge_networks: true
+    networks_cli_compatible: false
+
+- name: "check if .my.cnf file exists for 'root' user"
+  stat:
+    path: "/root/.my.cnf"
+  register: root_my_cnf
+
+- name: "create .my.cnf file"
+  template:
+    src: my.j2
+    dest: /root/.my.cnf
+    owner: root
+    group: root
+    mode: 0600
+  when: not root_my_cnf.stat.exists

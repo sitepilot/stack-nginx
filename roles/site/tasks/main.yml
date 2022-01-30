@@ -1,0 +1,18 @@
+---
+- import_tasks: provision.yml
+  tags: ["provision"]
+
+- import_tasks: backup/backup.yml
+  tags: ["never", "backup"]
+
+- import_tasks: backup/list.yml
+  tags: ["never", "backup/list"]
+
+- import_tasks: backup/restore.yml
+  tags: ["never", "backup/restore"]
+
+- import_tasks: backup/destroy.yml
+  tags: ["never", "backup/destroy"]
+
+- import_tasks: destroy.yml
+  tags: ["never", "destroy"]

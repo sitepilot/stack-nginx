@@ -1,0 +1,25 @@
+# {{ ansible_managed }}
+# Don't log favicon.ico
+location = /favicon.ico {
+  log_not_found off;
+  access_log off;
+}
+
+# Don't log robots.txt
+location = /robots.txt {
+  log_not_found off;
+  access_log off;
+}
+
+# Cache assets and media
+location ~* \.(?:css(\.map)?|js(\.map)?|jpe?g|png|gif|ico|cur|heic|webp|tiff?|mp3|m4a|aac|ogg|midi?|wav|mp4|mov|webm|mpe?g|avi|ogv|flv|wmv)$ {
+  expires $static_files_cache;
+  access_log off;
+}
+
+# Cache svg and fonts
+location ~* \.(?:svgz?|ttf|ttc|otf|eot|woff2?)$ {
+  add_header Access-Control-Allow-Origin "*";
+  expires $static_files_cache;
+  access_log off;
+}

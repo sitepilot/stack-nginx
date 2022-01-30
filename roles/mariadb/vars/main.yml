@@ -1,0 +1,3 @@
+---
+mariadb_versions:
+  - "10.6"

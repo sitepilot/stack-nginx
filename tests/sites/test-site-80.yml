@@ -1,5 +1,5 @@
 ---
-host: test-server
+site_hosts: test-server
 
 # General
 site_name: test-site-80
@@ -12,6 +12,7 @@ site_cache_enabled: true
 site_open_basedir_enabled: true
 site_authorized_keys:
   - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC/n4j43Bn79bdXrB/I5cS3xEtCdkcl2NVpxd4WOefLgT1j9try83UE35RwrhOkCLC/ctR/TGeQdQSq0Rff9g208mQI261bDD2OkcuIRv1VlX/tu/9kskH2UcX9V22cLYdCDOli2f5R/2mHLg+AtICESYOLxZ+zGYLnq0fB1jBIVoV+ymBOZrzgGmtwFxsTEVc6MRE9dtO5YXKg6qWiP9icm5+qpqlY12jg13dwJRJhqhwlkxBINEavZZrWgCUJ6JYaXiuBc/z0kABqrZk5lKPPrk4jNXDSpbd1hHlj83MoUxbiLTA23VGL+Mpij9qEw0lER7ix9EW+XvDM28LXSJ5BRJRXBCSNQnNmRa8GmHoPeLdhR/Tlp2ZAzfCLuDfqsTIfFzn//GAvxcIIR+VT/yR76rqrBb1bXXEAverlE2hpic3515rzex1BODglYGbrGvfIFPx2pKjQXZ+oj/xoq3izulESUyPBClNvykrGsl03jwPZASWdjn2b4nGFVT5hf3k= test@sitepilot.local
+#site_shell: /bin/bash
 
 # Basic auth (user: sitepilot / password: secret)
 site_htpasswd: |
@@ -19,7 +20,7 @@ site_htpasswd: |
 
 # Backup
 site_backup_repo: /tmp/backup/test-site-80
-site_backup_tag: 1023
+site_backup_tag: id-1234
 site_backup_password: secret
 
 # Restore

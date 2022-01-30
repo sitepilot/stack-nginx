@@ -1,0 +1,19 @@
+---
+- name: "firewall : install packages"
+  apt:
+    name: "ufw"
+    state: present
+
+- name: "firewall : create rules"
+  ufw:
+    port: "{{ item.port }}"
+    comment: "{{ item.comment }}"
+    rule: allow
+    state: enabled
+  loop: "{{ firewall_rules }}"
+
+- name: "firewall : enable on startup"
+  service:
+    name: ufw
+    enabled: true
+    state: started

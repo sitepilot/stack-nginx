@@ -1,0 +1,61 @@
+---
+- package_facts:
+    manager: "auto"
+
+- assert:
+    that:
+      - database_name | length > 0
+      - database_backup_repo | length > 0
+      - database_backup_password | length > 0
+      - database_backup_id | length > 0
+      - "'restic' in ansible_facts.packages"
+
+- set_fact:
+    restore_path: "/opt/sitepilot/backups/{{ database_name }}"
+    restore_file: "/opt/sitepilot/backups/{{ database_name }}/{{ database_name }}.sql"
+
+- name: "create restore folder"
+  file:
+    path: "{{ restore_path }}"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: "0700"
+    recurse: true
+
+- name: "restore backup files"
+  command: "restic -r {{ database_backup_repo }} --json restore {{ database_backup_id }} --target ."
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ database_backup_s3_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ database_backup_s3_secret }}"
+    RESTIC_PASSWORD: "{{ database_backup_password }}"
+  args:
+    chdir: "{{ restore_path }}"
+  no_log: true
+  register: result
+  changed_when: false
+
+- name: "drop database"
+  mysql_db:
+    state: absent
+    name: "{{ database_name }}"
+    config_file: "/root/.my.cnf"
+    login_host: "127.0.0.1"
+
+- name: "import database dump"
+  mysql_db:
+    state: import
+    name: "{{ database_name }}"
+    target: "{{ restore_file }}"
+    config_file: "/root/.my.cnf"
+    single_transaction: true
+    login_host: "127.0.0.1"
+
+- name: "remove database dump"
+  file:
+    state: absent
+    path: "{{ restore_path }}"
+
+- name: "result"
+  debug:
+    msg: "{{ result.stdout_lines | last }}"

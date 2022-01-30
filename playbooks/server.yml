@@ -1,0 +1,38 @@
+---
+- hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: ensure host is defined
+      fail:
+        msg: "Host variable is missing. Use `-e` to define `host`: ansible-playbook playbooks/server/provision.yml -e host=<host-or-group-name>"
+      when: host is not defined
+      tags: [variable-check]
+
+- hosts: "{{ host }}"
+  roles:
+    - role: common
+      tags: common
+
+    - role: smtp
+      when: "'smtp' in stack"
+      tags: "smtp"
+
+    - role: mariadb
+      when: "'mariadb' in stack"
+      tags: "mariadb"
+
+    - role: phpmyadmin
+      when: "'phpmyadmin' in stack"
+      tags: "phpmyadmin"
+
+    - role: mailhog
+      when: "'mailhog' in stack"
+      tags: "mailhog"
+
+    - role: wpcli
+      when: "'wpcli' in stack"
+      tags: "wpcli"
+
+    - role: composer
+      when: "'composer' in stack"
+      tags: "composer"

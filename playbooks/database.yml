@@ -1,0 +1,4 @@
+---
+- hosts: "{{ database_hosts }}"
+  roles:
+    - role: database

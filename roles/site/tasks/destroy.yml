@@ -1,0 +1,27 @@
+---
+- assert:
+    that:
+      - site_name | length > 0
+
+- name: "destroy openresty configs"
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "/opt/sitepilot/sites/{{ site_name }}"
+    - "/usr/local/openresty/nginx/conf/sites-enabled/{{ site_name }}"
+  notify:
+    - reload openresty
+
+- name: cleanup fpm pools
+  include_tasks: includes/cleanup-pool.yml
+  vars:
+    destroy: true
+  loop: "{{ php_versions }}"
+
+- meta: flush_handlers
+
+- name: "destroy site user"
+  user:
+    name: "{{ site_name }}"
+    state: absent

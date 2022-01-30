@@ -1,0 +1,6 @@
+---
+- import_tasks: provision.yml
+  tags: ["provision"]
+
+- import_tasks: destroy.yml
+  tags: ["never", "destroy"]
