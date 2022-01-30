@@ -11,39 +11,28 @@
 - hosts: "{{ host }}"
   roles:
     - role: common
-      tags: [common]
-  tasks:
-    - include_role:
-        name: smtp
-      tags: [smtp]
+      tags: common
+
+    - role: smtp
       when: "'smtp' in stack"
+      tags: "smtp"
 
-    - include_role:
-        name: mariadb
-      tags: [mariadb]
+    - role: mariadb
       when: "'mariadb' in stack"
+      tags: "mariadb"
 
-    - include_role:
-        name: phpmyadmin
-      tags: [phpmyadmin]
+    - role: phpmyadmin
       when: "'phpmyadmin' in stack"
+      tags: "phpmyadmin"
 
-    - include_role:
-        name: mailhog
-      tags: [mailhog]
+    - role: mailhog
       when: "'mailhog' in stack"
+      tags: "mailhog"
 
-    - include_role:
-        name: composer
-      tags: [composer]
-      when: "'composer' in stack"
-
-    - include_role:
-        name: wpcli
-      tags: [wpcli]
+    - role: wpcli
       when: "'wpcli' in stack"
+      tags: "wpcli"
 
-    - include_role:
-        name: metrics
-      tags: [metrics]
-      when: "'metrics' in stack"
+    - role: composer
+      when: "'composer' in stack"
+      tags: "composer"
