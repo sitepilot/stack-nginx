@@ -91,10 +91,10 @@ ansible-playbook playbooks/user.yml -e @resources/users/my-user.yml -t destroy
 
 ## Web Apps
 
+* Health check: `https://{{ site_domain }}/-/ping/`
 * phpMyAdmin: `https://{{ site_domain }}/-/phpmyadmin/`
 * Mailhog: `https://{{ site_domain }}/-/mailhog/`
 * Node Exporter: `https://{{ site_domain }}/-/monitor/`
-* Health check: `https://{{ site_domain }}/-/ping/`
 
 ## Filesystem
 
@@ -106,9 +106,9 @@ ansible-playbook playbooks/user.yml -e @resources/users/my-user.yml -t destroy
 
 * Public path: `/opt/sitepilot/sites/{{ site_name }}/files`
 * Logs path: `/opt/sitepilot/sites/{{ site_name }}/logs`
-* Home path: `/opt/sitepilot/sites/{{ site_name }}/home`
 * Cache path: `/opt/sitepilot/sites/{{ site_name }}/.cache`
 * Config path: `/opt/sitepilot/sites/{{ site_name }}/.config`
+* User home path: `/opt/sitepilot/sites/{{ site_name }}/home`
 
 ## Cache Purge
 
