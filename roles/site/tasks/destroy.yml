@@ -17,7 +17,7 @@
   include_tasks: includes/cleanup-pool.yml
   vars:
     destroy: true
-  loop: "{{ site_php_versions }}"
+  loop: "{{ php_versions }}"
 
 - meta: flush_handlers
 

@@ -5,16 +5,7 @@
       - site_domains | length > 0
       - site_password | length > 0
       - site_php_version | string | length > 0
-
-- import_role:
-    name: php
-  vars:
-    php_version: "{{ site_php_version }}"
-  tags: php
-
-- import_role:
-    name: openresty
-  tags: openresty
+      - "'{{ site_php_version }}' in php_versions"
 
 - name: "create site-users group"
   group:
@@ -178,4 +169,4 @@
 
 - name: cleanup fpm pools
   include_tasks: includes/cleanup-pool.yml
-  loop: "{{ site_php_versions }}"
+  loop: "{{ php_versions }}"
