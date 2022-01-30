@@ -6,6 +6,7 @@
     that:
       - mariadb_version | string | length > 0
       - mariadb_root_password | length > 0
+      - "'{{ mariadb_version }}' in mariadb_versions"
       - "'docker-ce' in ansible_facts.packages"
 
 - name: "install packages"

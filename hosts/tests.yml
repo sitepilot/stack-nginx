@@ -4,8 +4,8 @@ tests:
     test-server:
       platform: docker
       hostname: test-server
-      php_version: "8.0"
-      mariadb_version: "10.6"
+      php_version: 8.0
+      mariadb_version: 10.6
       mariadb_root_password: "supersecret"
       stack: [smtp, mariadb, phpmyadmin, mailhog, composer, wpcli, metrics]
       ansible_user: root

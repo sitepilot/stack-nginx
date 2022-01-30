@@ -2,6 +2,7 @@
 - assert:
     that:
       - php_version | string | length > 0
+      - "'{{ php_version }}' in php_versions"
 
 - name: "{{ php_version }} : add repository"
   apt_repository:
