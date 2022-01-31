@@ -33,3 +33,12 @@
 - name: "base : set timezone"
   timezone:
     name: "{{ timezone }}"
+
+- name: "base : create base folder"
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: "{{ item.mode }}"
+  loop:
+    - path: "/opt/sitepilot"
+      mode: "0755"
