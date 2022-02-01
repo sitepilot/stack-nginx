@@ -52,8 +52,8 @@
       group: root
       mode: "0755"
     - path: "/opt/sitepilot/sites/{{ site_name }}/logs"
-      user: root
-      group: root
+      user: "{{ site_name }}"
+      group: "{{ site_name }}"
       mode: "0755"
     - path: "/opt/sitepilot/sites/{{ site_name }}/files"
       user: "{{ site_name }}"
@@ -63,6 +63,10 @@
       user: www-data
       group: root
       mode: "0700"
+    - path: "/opt/sitepilot/sites/{{ site_name }}/home/site"
+      user: "{{ site_name }}"
+      group: "{{ site_name }}"
+      mode: "0755"
     - path: "/opt/sitepilot/sites/{{ site_name }}/home/.local/bin"
       user: "{{ site_name }}"
       group: "{{ site_name }}"
@@ -76,9 +80,9 @@
     mode: "0755"
   loop:
     - src: "/opt/sitepilot/sites/{{ site_name }}/files"
-      dest: "/opt/sitepilot/sites/{{ site_name }}/home/files"
+      dest: "/opt/sitepilot/sites/{{ site_name }}/home/site/files"
     - src: "/opt/sitepilot/sites/{{ site_name }}/logs"
-      dest: "/opt/sitepilot/sites/{{ site_name }}/home/logs"
+      dest: "/opt/sitepilot/sites/{{ site_name }}/home/site/logs"
     - src: "/usr/bin/php{{ site_php_version }}"
       dest: "/opt/sitepilot/sites/{{ site_name }}/home/.local/bin/php"
 
