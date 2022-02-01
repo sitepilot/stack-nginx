@@ -7,7 +7,7 @@ tests:
       php_version: 8.0
       mariadb_version: 10.6
       mariadb_root_password: "supersecret"
-      stack: [smtp, mariadb, phpmyadmin, mailhog, composer, wpcli, metrics]
+      stack: [smtp, mariadb, phpmyadmin, mailhog, composer, wpcli, nodejs, metrics]
       ansible_user: root
       ansible_host: 127.0.0.1
       ansible_port: 10022

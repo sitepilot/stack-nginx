@@ -36,3 +36,11 @@
     - role: composer
       when: "'composer' in stack"
       tags: "composer"
+
+    - role: nodejs
+      when: "'nodejs' in stack"
+      tags: "nodejs"
+
+    - role: metrics
+      when: "'metrics' in stack"
+      tags: "metrics"

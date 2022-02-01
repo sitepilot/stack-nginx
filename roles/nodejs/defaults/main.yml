@@ -1,0 +1,3 @@
+---
+# Supported versions are defined in ../vars/main.yml
+nodejs_version: "16.x"
