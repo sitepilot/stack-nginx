@@ -97,16 +97,21 @@
       etype: "group"
       default: false
     - path: "/opt/sitepilot/sites/{{ site_name }}"
-      permissions: ---
-      entity: "site-users"
-      etype: "group"
+      permissions: rx
+      entity: "{{ site_name }}"
+      etype: "user"
       default: false
-    - path: "/usr/local/openresty"
+    - path: "/opt/sitepilot/sites/{{ site_name }}"
       permissions: ---
       entity: "site-users"
       etype: "group"
       default: false
     - path: "/etc/php/{{ php_version }}/fpm/pool.d"
+      permissions: ---
+      entity: "site-users"
+      etype: "group"
+      default: false
+    - path: "/usr/local/openresty"
       permissions: ---
       entity: "site-users"
       etype: "group"
