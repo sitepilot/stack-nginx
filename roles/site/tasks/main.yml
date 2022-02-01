@@ -1,4 +1,9 @@
 ---
+- set_fact:
+    site_user: "{{ site_user | default(site_name) }}"
+    custom_user: "{{ site_user is defined }}"
+  tags: ["always"]
+
 - import_tasks: provision.yml
   tags: ["provision"]
 

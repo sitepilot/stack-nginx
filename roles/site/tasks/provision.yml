@@ -11,33 +11,40 @@
   group:
     name: site-users
     state: present
+  when: not custom_user
 
 - name: "create sftp-only group"
   group:
     name: sftp-only
     state: present
-  when: not site_ssh_enabled
+  when:
+    - not custom_user
+    - not site_ssh_enabled
 
 - set_fact:
     site_user_groups: "{{ site_user_groups }} + [ 'sftp-only' ]"
-  when: not site_ssh_enabled
+  when:
+    - not custom_user
+    - not site_ssh_enabled
 
 - name: "create site user"
   user:
-    name: "{{ site_name }}"
+    name: "{{ site_user }}"
     password: "{{ site_password }}"
     groups: "{{ site_user_groups }}"
     shell: "{{ site_shell }}"
     append: false
     create_home: true
     home: /opt/sitepilot/sites/{{ site_name }}/home
+  when: not custom_user
 
 - name: "add authorized keys"
   authorized_key:
-    user: "{{ site_name }}"
+    user: "{{ site_user }}"
     state: "present"
     key: "{{ site_authorized_keys | join('\n') }}"
     exclusive: true
+  when: not custom_user
 
 - name: "create site folders"
   file:
@@ -52,24 +59,20 @@
       group: root
       mode: "0755"
     - path: "/opt/sitepilot/sites/{{ site_name }}/logs"
-      user: "{{ site_name }}"
-      group: "{{ site_name }}"
+      user: "{{ site_user }}"
+      group: "{{ site_user }}"
       mode: "0755"
     - path: "/opt/sitepilot/sites/{{ site_name }}/files"
-      user: "{{ site_name }}"
-      group: "{{ site_name }}"
+      user: "{{ site_user }}"
+      group: "{{ site_user }}"
       mode: "0755"
     - path: "/opt/sitepilot/sites/{{ site_name }}/.config"
       user: www-data
       group: root
       mode: "0700"
-    - path: "/opt/sitepilot/sites/{{ site_name }}/home/site"
-      user: "{{ site_name }}"
-      group: "{{ site_name }}"
-      mode: "0755"
     - path: "/opt/sitepilot/sites/{{ site_name }}/home/.local/bin"
-      user: "{{ site_name }}"
-      group: "{{ site_name }}"
+      user: "{{ site_user }}"
+      group: "{{ site_user }}"
       mode: "0755"
 
 - name: "create home symlinks"
@@ -80,9 +83,9 @@
     mode: "0755"
   loop:
     - src: "/opt/sitepilot/sites/{{ site_name }}/files"
-      dest: "/opt/sitepilot/sites/{{ site_name }}/home/site/files"
+      dest: "/opt/sitepilot/sites/{{ site_name }}/home/files"
     - src: "/opt/sitepilot/sites/{{ site_name }}/logs"
-      dest: "/opt/sitepilot/sites/{{ site_name }}/home/site/logs"
+      dest: "/opt/sitepilot/sites/{{ site_name }}/home/logs"
     - src: "/usr/bin/php{{ site_php_version }}"
       dest: "/opt/sitepilot/sites/{{ site_name }}/home/.local/bin/php"
 
@@ -102,7 +105,7 @@
       default: false
     - path: "/opt/sitepilot/sites/{{ site_name }}"
       permissions: rx
-      entity: "{{ site_name }}"
+      entity: "{{ site_user }}"
       etype: "user"
       default: false
     - path: "/opt/sitepilot/sites/{{ site_name }}"

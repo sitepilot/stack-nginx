@@ -2,11 +2,11 @@
 
 [{{ site_name }}]
 
-user = {{ site_name }}
-group = {{ site_name }}
+user = {{ site_user }}
+group = {{ site_user }}
 
 listen = /run/php/php{{ site_php_version }}-{{ site_name }}.sock
-listen.owner = {{ site_name }}
+listen.owner = {{ site_user }}
 listen.group = www-data
 listen.mode = 0660
 

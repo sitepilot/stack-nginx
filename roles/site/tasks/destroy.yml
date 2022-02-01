@@ -23,5 +23,6 @@
 
 - name: "destroy site user"
   user:
-    name: "{{ site_name }}"
+    name: "{{ site_user }}"
     state: absent
+  when: not custom_user
