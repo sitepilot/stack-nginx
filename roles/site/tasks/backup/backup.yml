@@ -20,11 +20,11 @@
     AWS_SECRET_ACCESS_KEY: "{{ site_backup_s3_secret }}"
     RESTIC_PASSWORD: "{{ site_backup_password }}"
   register: command_result
-  failed_when: "(command_result.stderr | length > 0) and ('config file already exists' not in command_result.stderr)"
+  failed_when: false
   changed_when: false
 
 - name: "backup site files"
-  command: "restic -r {{ site_backup_repo }} --tag {{ site_backup_tag }} --json backup ./files"
+  command: "restic -r {{ site_backup_repo }} --tag {{ site_backup_tag }} --quiet --json backup ./files"
   environment:
     AWS_ACCESS_KEY_ID: "{{ site_backup_s3_key }}"
     AWS_SECRET_ACCESS_KEY: "{{ site_backup_s3_secret }}"
@@ -36,4 +36,5 @@
 
 - name: "result"
   debug:
-    msg: "{{ result.stdout_lines | last }}"
+    msg: "{{ item | from_json }}"
+  loop: "{{ result.stdout_lines }}"
