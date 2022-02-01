@@ -91,16 +91,6 @@
     state: present
     default: "{{ item.default }}"
   loop:
-    - path: "/opt/sitepilot/sites/{{ site_name }}"
-      permissions: rx
-      entity: "{{ site_name }}"
-      etype: "user"
-      default: false
-    - path: "/opt/sitepilot/sites/{{ site_name }}/files"
-      permissions: rwx
-      entity: "{{ site_name }}"
-      etype: "user"
-      default: true
     - path: "/opt/sitepilot/sites"
       permissions: x
       entity: "site-users"
@@ -121,16 +111,6 @@
       entity: "site-users"
       etype: "group"
       default: false
-    - path: "/opt/sitepilot/sites/{{ site_name }}/files"
-      permissions: rwx
-      entity: "sudo"
-      etype: "group"
-      default: false
-    - path: "/opt/sitepilot/sites/{{ site_name }}/files"
-      permissions: rwx
-      entity: "sudo"
-      etype: "group"
-      default: true
 
 - name: "generate jailshell script"
   template:
