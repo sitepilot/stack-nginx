@@ -11,7 +11,6 @@
   group:
     name: site-users
     state: present
-  when: not custom_user
 
 - name: "create sftp-only group"
   group:
