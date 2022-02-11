@@ -9,9 +9,6 @@ fastcgi_cache_use_stale error timeout updating invalid_header http_500;
 # Allow caching of requests which contain the following headers.
 fastcgi_ignore_headers Cache-Control Expires;
 
-# Show the cache status in server responses.
-add_header Sitepilot-Cache $upstream_cache_status;
-
 # Don't skip cache by default
 set $skip_cache 0;
 

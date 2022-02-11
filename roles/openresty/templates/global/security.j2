@@ -19,7 +19,7 @@ location ~\.(ini|log|conf|sql)$ {
 }
 
 # Deny uploaded scripts
-location ~* ^/wp-content/uploads/.*\.(?:s?html?|php|js|swf)$ {
+location ~* ^/wp-content/uploads/.*\.(php|swf)$ {
   deny all;
 }
 

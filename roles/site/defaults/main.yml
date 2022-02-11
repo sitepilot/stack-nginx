@@ -13,6 +13,7 @@ site_authorized_keys: []
 site_shell: /bin/jailshell
 site_user_groups:
   - site-users
+site_document_root: ""
 
 # Basic auth
 site_htpasswd: ""

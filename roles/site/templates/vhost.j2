@@ -11,7 +11,7 @@ server {
   set $static_files_cache 7d;
   set $base /opt/sitepilot/sites/{{ site_name }};
 
-  root $base/files;
+  root $base/files{{ '/' + site_document_root if site_document_root | length > 0 else '' }};
 
   index index.php index.html;
 
@@ -58,12 +58,14 @@ server {
       content_by_lua_file conf/lua/purge.lua;
     }
 
-    include global/fastcgi-cache.conf;
+    # Show the cache status in server responses
+    add_header Sitepilot-Cache $upstream_cache_status;
 {% endif %}
 
     # Static files
     include global/static-files.conf;
 
+    # Permalinks
     try_files $uri $uri/ /index.php?$args;
 
     # PHP
@@ -71,6 +73,7 @@ server {
       try_files $uri =404;
       include fastcgi.conf;
 {% if site_cache_enabled %}
+      include global/fastcgi-cache.conf;
       fastcgi_cache_bypass $skip_cache;
       fastcgi_no_cache $skip_cache;
       fastcgi_cache {{ site_name }};
