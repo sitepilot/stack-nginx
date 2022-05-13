@@ -4,12 +4,13 @@ tests:
     test-server:
       platform: docker
       hostname: test-server
-      php_version: "80"
+      php_version: 8.0
       mariadb_version: 10.6
       mariadb_root_password: "supersecret"
-      stack: [smtp, mariadb, phpmyadmin, mailhog, composer, wpcli, nodejs, metrics]
+      stack:
+        [smtp, mariadb, phpmyadmin, mailhog, composer, wpcli, nodejs, metrics]
       ansible_user: root
-      ansible_host: 116.203.203.11
-      ansible_port: 22
-      #ansible_ssh_private_key_file: docker/filesystem/root/.ssh/id_ed25519
+      ansible_host: 127.0.0.1
+      ansible_port: 10022
+      ansible_ssh_private_key_file: docker/filesystem/root/.ssh/id_ed25519
       ansible_ssh_common_args: -o StrictHostKeyChecking=no
