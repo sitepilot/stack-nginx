@@ -9,7 +9,7 @@
     state: absent
   loop:
     - "/opt/sitepilot/sites/{{ site_name }}"
-    - "/usr/local/lsws/conf/vhosts/{{ site_name }.conf"
+    - "/usr/local/lsws/conf/vhosts/{{ site_name }}.conf"
   notify:
     - reload lshttpd
 
