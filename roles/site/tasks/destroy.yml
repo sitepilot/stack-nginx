@@ -10,6 +10,9 @@
   loop:
     - "/opt/sitepilot/sites/{{ site_name }}"
     - "/usr/local/lsws/conf/vhosts/{{ site_name }}.conf"
+    - "/usr/local/lsws/conf/vhosts/{{ site_name }}.conf0"
+    - "/usr/local/lsws/conf/vhosts/{{ site_name }}.conf0,v"
+
   notify:
     - reload lshttpd
 
@@ -19,4 +22,5 @@
   user:
     name: "{{ site_user }}"
     state: absent
+    force: true
   when: not custom_user
