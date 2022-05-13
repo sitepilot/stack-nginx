@@ -1,8 +1,9 @@
 ---
 dependencies:
-  - role: php
-    tags: ["provision", "php"]
+  - role: lshttpd
+    tags: ["provision", "lshttpd"]
+
+  - role: lsphp
+    tags: ["provision", "lsphp"]
     vars:
       php_version: "{{ site_php_version }}"
-  - role: openresty
-    tags: ["provision", "openresty"]

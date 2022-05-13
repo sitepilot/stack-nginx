@@ -3,21 +3,15 @@
     that:
       - site_name | length > 0
 
-- name: "destroy openresty configs"
+- name: "destroy site files"
   file:
     path: "{{ item }}"
     state: absent
   loop:
     - "/opt/sitepilot/sites/{{ site_name }}"
-    - "/usr/local/openresty/nginx/conf/sites-enabled/{{ site_name }}"
+    - "/usr/local/lsws/conf/vhosts/{{ site_name }.conf"
   notify:
-    - reload openresty
-
-- name: cleanup fpm pools
-  include_tasks: includes/cleanup-pool.yml
-  vars:
-    destroy: true
-  loop: "{{ php_versions }}"
+    - reload lshttpd
 
 - meta: flush_handlers
 

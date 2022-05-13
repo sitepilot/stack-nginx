@@ -2,5 +2,5 @@
 dependencies:
   - role: docker
     tags: ["docker"]
-  - role: openresty
-    tags: ["openresty"]
+  - role: lshttpd
+    tags: ["lshttpd"]

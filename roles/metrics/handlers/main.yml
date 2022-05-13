@@ -4,7 +4,7 @@
     name: node-exporter
     state: restarted
 
-- name: reload openresty
+- name: reload lshttpd
   service:
-    name: openresty
+    name: lshttpd
     state: reloaded

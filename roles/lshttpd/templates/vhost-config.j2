@@ -1,0 +1,44 @@
+listeners                   http, https
+
+allowSymbolLink             1
+enableScript                1
+restrained                  1
+setUIDMode                  2
+
+enableGzip                  1
+enableIpGeo                 1
+
+errorlog $VH_ROOTlogs/error.log {
+    useServer               0
+    logLevel                NOTICE
+    rollingSize             0
+}
+
+accesslog $VH_ROOTlogs/access.log {
+    useServer               0
+    logFormat               %a %l %u %t "%r" %>s %O "%{Referer}i" "%{User-Agent}i"
+    logHeaders              5
+    rollingSize             0
+}
+
+rewrite  {
+    enable                  1
+    autoLoadHtaccess        1
+    rules                   <<<END_rules
+{% if 'phpmyadmin' in stack %}
+RewriteRule ^(\/-\/phpmyadmin)/(.*) http://phpmyadmin/$2 [P,L]
+{% endif %}
+{% if 'mailhog' in stack %}
+RewriteRule ^(\/-\/mailhog)/(.*) http://mailhog/$1/$2 [P,L]
+{% endif %}
+{% if 'metrics' in stack %}
+RewriteRule ^(\/-\/monitor)/(.*) http://monitor/$1/$2 [P,L]
+{% endif %}
+    END_rules
+}
+
+{% if 'mailhog' in stack %}
+websocket /-/mailhog/ {
+    address                 127.0.0.1:8002
+}
+{% endif %}

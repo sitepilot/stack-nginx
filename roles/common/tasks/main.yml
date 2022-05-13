@@ -4,17 +4,17 @@
       - platform | length > 0
       - hostname | length > 0
 
-- include: base.yml
+- include_tasks: base.yml
   tags: "base"
 
-- include: hostname.yml
+- include_tasks: hostname.yml
   tags: "hostname"
 
-- include: sshd.yml
+- include_tasks: sshd.yml
   tags: "sshd"
 
-- include: firewall.yml
+- include_tasks: firewall.yml
   tags: "firewall"
 
-- include: unattended-upgrades.yml
+- include_tasks: unattended-upgrades.yml
   tags: "unattended-upgrades"

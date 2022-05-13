@@ -91,36 +91,21 @@ ansible-playbook user.yml -e @resources/users/my-user.yml -t destroy
 
 ## Web Apps
 
-* Health check: `https://{{ site_domain }}/-/ping/`
 * phpMyAdmin: `https://{{ site_domain }}/-/phpmyadmin/`
 * Mailhog: `https://{{ site_domain }}/-/mailhog/`
 * Node Exporter: `https://{{ site_domain }}/-/monitor/`
 
 ## Filesystem
 
-* Vhosts: `/usr/local/openresty/nginx/conf/sites-enabled`
-* PHP-FPM pools: `/etc/php/{{ php_version }}/fpm/pool.d`
+* Vhosts: `/usr/local/lsws/conf/vhosts`
 * MariaDB data: `/opt/sitepilot/stack/mariadb/data`
 
 ### Site Files
 
 * Public path: `/opt/sitepilot/sites/{{ site_name }}/files`
 * Logs path: `/opt/sitepilot/sites/{{ site_name }}/logs`
-* Cache path: `/opt/sitepilot/sites/{{ site_name }}/.cache`
 * Config path: `/opt/sitepilot/sites/{{ site_name }}/.config`
 * User home path: `/opt/sitepilot/sites/{{ site_name }}/home`
-
-## Cache Purge
-
-Send a `PURGE` request to the URL you would like to purge:
-
-```
-# Purge site cache
-curl -X PURGE https://{{ site_domain }}/
-
-# Purge a single post
-curl -X PURGE https://{{ site_domain }}/hello-world/
-```
 
 ## Author
 

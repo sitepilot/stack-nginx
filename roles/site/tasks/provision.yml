@@ -85,7 +85,7 @@
       dest: "/opt/sitepilot/sites/{{ site_name }}/home/files"
     - src: "/opt/sitepilot/sites/{{ site_name }}/logs"
       dest: "/opt/sitepilot/sites/{{ site_name }}/home/logs"
-    - src: "/usr/bin/php{{ site_php_version }}"
+    - src: "/usr/local/lsws/lsphp{{ site_php_version }}/bin/php"
       dest: "/opt/sitepilot/sites/{{ site_name }}/home/.local/bin/php"
 
 - name: "setup acl"
@@ -112,13 +112,8 @@
       entity: "site-users"
       etype: "group"
       default: false
-    - path: "/etc/php/{{ php_version }}/fpm/pool.d"
-      permissions: ---
-      entity: "site-users"
-      etype: "group"
-      default: false
-    - path: "/usr/local/openresty"
-      permissions: ---
+    - path: "/usr/local/lsws"
+      permissions: x
       entity: "site-users"
       etype: "group"
       default: false
@@ -137,13 +132,10 @@
   loop:
     - src: "vhost.j2"
       dest: "/opt/sitepilot/sites/{{ site_name }}/.config/vhost.conf"
-    - src: "pool.j2"
-      dest: "/opt/sitepilot/sites/{{ site_name }}/.config/pool.conf"
     - src: "htpasswd.j2"
       dest: "/opt/sitepilot/sites/{{ site_name }}/.config/htpasswd"
   notify:
-    - "reload openresty"
-    - "reload php{{ site_php_version }}-fpm"
+    - "reload lshttpd"
 
 - name: "enable site"
   file:
@@ -151,13 +143,7 @@
     dest: "{{ item.dest }}"
     state: link
     mode: "0644"
-  notify: reload openresty
+  notify: reload lshttpd
   loop:
     - src: "/opt/sitepilot/sites/{{ site_name }}/.config/vhost.conf"
-      dest: "/usr/local/openresty/nginx/conf/sites-enabled/{{ site_name }}"
-    - src: "/opt/sitepilot/sites/{{ site_name }}/.config/pool.conf"
-      dest: "/etc/php/{{ site_php_version }}/fpm/pool.d/{{ site_name }}.conf"
-
-- name: cleanup fpm pools
-  include_tasks: includes/cleanup-pool.yml
-  loop: "{{ php_versions }}"
+      dest: "/usr/local/lsws/conf/vhosts/{{ site_name }}.conf"

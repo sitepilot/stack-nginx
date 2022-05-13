@@ -5,12 +5,12 @@
 - assert:
     that:
       - node_exporter_version | string | length > 0
-      - "'openresty' in ansible_facts.packages"
+      - "'openlitespeed' in ansible_facts.packages"
 
 - set_fact:
     node_exporter_release_name: "node_exporter-{{ node_exporter_version }}.linux-amd64"
 
-- name: Check that the somefile.conf exists
+- name: check if installer exists
   stat:
     path: /opt/sitepilot/stack/node-exporter/{{ node_exporter_version }}.tar.gz
   register: installer
@@ -67,9 +67,3 @@
   with_items:
     - /tmp/{{ node_exporter_release_name }}
 
-- name: "configure openresty"
-  template:
-    src: nginx.j2
-    dest: /usr/local/openresty/nginx/conf/locations/node-exporter.conf
-    mode: "0644"
-  notify: reload openresty

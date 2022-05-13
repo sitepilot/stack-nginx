@@ -10,7 +10,6 @@ set -euo pipefail
       --proc /proc \
       --dev /dev \
       --bind /opt/sitepilot/sites/${USER} /opt/sitepilot/sites/${USER} \
-      --ro-bind /etc/php /etc/php \
       --ro-bind /etc/ssl /etc/ssl \
       --ro-bind /etc/resolv.conf /etc/resolv.conf \
       --symlink usr/lib /lib \

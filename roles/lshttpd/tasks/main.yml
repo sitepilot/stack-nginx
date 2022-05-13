@@ -1,0 +1,48 @@
+---
+- name: "install repository keys"
+  apt_key:
+    url: "{{ item }}"
+    state: present
+  loop:
+    - http://rpms.litespeedtech.com/debian/lst_repo.gpg
+    - http://rpms.litespeedtech.com/debian/lst_debian_repo.gpg
+
+- name: "install repository"
+  apt_repository:
+    repo: "deb https://rpms.litespeedtech.com/debian/ focal main"
+    state: present
+    mode: "0644"
+
+- name: "install packages"
+  apt:
+    name:
+      - openlitespeed
+      - ols-modsecurity
+    state: present
+    update_cache: yes
+  notify: reload lshttpd
+
+- name: "generate httpd configuration"
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "lsadm"
+    group: "nogroup"
+    mode: "0644"
+  loop:
+    - src: httpd-config.j2
+      dest: /usr/local/lsws/conf/httpd_config.conf
+    - src: vhost-config.j2
+      dest: /usr/local/lsws/conf/vhost_config.conf
+  notify:
+    - reload lshttpd
+
+- name: "generate admin password script"
+  template:
+    src: password-reset.j2
+    dest: /root/lshttpd-password-reset.sh
+    mode: "a+x"
+
+- name: "{{ hostname }} : lshttpd : set admin password"
+  command: "/root/lshttpd-password-reset.sh admin {{ admin_password }}"
+  changed_when: false

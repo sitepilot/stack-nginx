@@ -4,10 +4,10 @@ host: test-server
 # General
 site_name: test-site-80
 site_password: $2y$10$kit1fHeGNDnQmkM.BA62kubip04TUNLRQYl1EJPNawJhNgOrniP5G # secret
-site_php_version: "8.0"
+site_php_version: "80"
 site_domains:
-  - test-site-80.sitepilot.local
-  - www.test-site-80.sitepilot.local
+  - test-site-80.ols.sitepilot.io
+  - www.test-site-80.ols.sitepilot.io
 site_cache_enabled: true
 site_open_basedir_enabled: true
 site_authorized_keys:
