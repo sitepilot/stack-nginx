@@ -34,6 +34,7 @@ RewriteRule ^(\/-\/mailhog)/(.*) http://mailhog/$1/$2 [P,L]
 {% if 'metrics' in stack %}
 RewriteRule ^(\/-\/monitor)/(.*) http://monitor/$1/$2 [P,L]
 {% endif %}
+RewriteRule ^/(xmlrpc|wp-trackback)\.php - [F,L,NC]
     END_rules
 }
 

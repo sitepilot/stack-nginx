@@ -44,15 +44,18 @@ virtualHost {{ site_name }} {
         php_admin_value mail.log "$VH_ROOTlogs/php-mail.log"
         php_admin_value error_log "$VH_ROOTlogs/php-error.log"
     }
-
+    
     context / {
         rewrite  {
-RewriteBase /
-RewriteRule ^/index.php$ - [L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.php [L]
-RewriteRule ^/(xmlrpc|wp-trackback)\.php - [F,L,NC]
+            RewriteBase /
+            RewriteRule ^/index.php$ - [L]
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteCond %{REQUEST_FILENAME} !-d
+            RewriteRule . /index.php [L]
         }
+
+{% if site_block_robots == 1 %}
+        extraHeaders            set X-Robots-Tag "noindex, nofollow, nosnippet, noarchive"
+{% endif %}
     }    
 }
