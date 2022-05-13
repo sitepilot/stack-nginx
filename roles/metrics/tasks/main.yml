@@ -66,4 +66,3 @@
     state: absent
   with_items:
     - /tmp/{{ node_exporter_release_name }}
-

@@ -19,7 +19,7 @@
       - openlitespeed
       - ols-modsecurity
     state: present
-    update_cache: yes
+    update_cache: true
   notify: reload lshttpd
 
 - name: "generate httpd configuration"
