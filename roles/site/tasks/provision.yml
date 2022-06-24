@@ -21,7 +21,7 @@
     - not site_ssh_enabled
 
 - set_fact:
-    site_user_groups: "{{ site_user_groups }} + [ 'sftp-only' ]"
+    site_user_groups: "{{ site_user_groups + [ 'sftp-only' ] }}"
   when:
     - not custom_user
     - not site_ssh_enabled
