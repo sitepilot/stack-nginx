@@ -54,8 +54,14 @@ virtualHost {{ site_name }} {
             RewriteRule . /index.php [L]
         }
 
+        extraHeaders <<<END_headers
+            set Server "Sitepilot"
 {% if site_block_robots == 1 %}
-        extraHeaders            set X-Robots-Tag "noindex, nofollow, nosnippet, noarchive"
+            set X-Robots-Tag "noindex, nofollow, nosnippet, noarchive"
 {% endif %}
+{% if site_htst_enabled == 1 %}
+            set Strict-Transport-Security: max-age=31536000
+{% endif %}
+        END_headers
     }    
 }

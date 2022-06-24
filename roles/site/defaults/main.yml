@@ -8,6 +8,7 @@ site_domains: []
 site_ssh_enabled: false
 site_open_basedir_enabled: false
 site_block_robots: false
+site_htst_enabled: false
 site_authorized_keys: []
 site_shell: /bin/jailshell
 site_user_groups:
