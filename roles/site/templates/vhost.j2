@@ -46,6 +46,11 @@ server {
     add_header X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
 {% endif %}
 
+{% if site_hsts_enabled %}
+    # HSTS
+    add_header Strict-Transport-Security "max-age=31536000; preload";
+{% endif %}
+
 {% if site_security_enabled %}
     # Security
     include global/security.conf;
@@ -59,7 +64,7 @@ server {
     }
 
     # Show the cache status in server responses
-    add_header Sitepilot-Cache $upstream_cache_status;
+    add_header X-Sitepilot-Cache $upstream_cache_status;
 {% endif %}
 
     # Static files
