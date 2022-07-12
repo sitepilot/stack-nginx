@@ -78,7 +78,9 @@ ping.path = /-/ping/
 php_admin_value[mail.log] = '/opt/sitepilot/sites/{{ site_name }}/logs/mail.log'
 php_admin_value[error_log] = '/opt/sitepilot/sites/{{ site_name }}/logs/debug.log'
 {% if site_open_basedir_enabled %}
-php_admin_value[open_basedir] = '/tmp/:/opt/sitepilot/sites/{{ site_name }}/'
+php_admin_value[open_basedir] = none
+php_admin_value[realpath_turbo.disable_dangerous_functions] = 1
+php_admin_value[realpath_turbo.open_basedir] = '/tmp/:/opt/sitepilot/sites/{{ site_name }}/'
 {% endif %}
 
 env[SITEPILOT_SITE] = '{{ site_name }}'
