@@ -58,20 +58,23 @@
     remote_src: true
   when: not realpath_turbo_installed.stat.exists
 
-- name: "{{ php_version }} : build realpath_turbo extension"
-  command: "{{ item }}"
-  with_items:
-    - "phpize{{ php_version }}"
-    - "./configure --with-php-config=php-config{{ php_version }}"
-    - "make"
-    - "make test NO_INTERACTION=1"
-    - "make install"
+- name: "{{ php_version }} : configure realpath_turbo extension"
+  shell: "phpize{{ php_version }} && ./configure --with-php-config=php-config{{ php_version }}"
   args:
     chdir: /tmp/realpath_turbo-master
     creates: /tmp/realpath_turbo-master/modules/realpath_turbo.so
   when: not realpath_turbo_installed.stat.exists
 
+- name: "{{ php_version }} : build realpath_turbo extension"
+  make:
+    chdir: /tmp/realpath_turbo-master
+
 - name: "{{ php_version }} : install realpath_turbo extension"
+  make:
+    chdir: /tmp/realpath_turbo-master
+    target: install
+
+- name: "{{ php_version }} : create realpath_turbo ini file"
   copy:
     content: "extension=realpath_turbo.so"
     dest: "/etc/php/{{ php_version }}/mods-available/realpath-turbo.ini"
