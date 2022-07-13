@@ -68,11 +68,13 @@
 - name: "{{ php_version }} : build realpath_turbo extension"
   make:
     chdir: /tmp/realpath_turbo-master
+  when: not realpath_turbo_installed.stat.exists
 
 - name: "{{ php_version }} : install realpath_turbo extension"
   make:
     chdir: /tmp/realpath_turbo-master
     target: install
+  when: not realpath_turbo_installed.stat.exists
 
 - name: "{{ php_version }} : create realpath_turbo ini file"
   copy:
