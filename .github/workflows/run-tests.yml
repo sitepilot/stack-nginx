@@ -27,6 +27,11 @@ jobs:
       - name: Lint Ansible files
         run: ansible-lint ./roles
 
+      - name: Setup LXD
+        uses: whywaita/setup-lxd@v1
+        with:
+          lxd_version: latest/stable
+
       - name: Initialize test container
         run: |
           ./container init
