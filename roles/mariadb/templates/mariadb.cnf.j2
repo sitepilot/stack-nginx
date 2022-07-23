@@ -1,0 +1,18 @@
+# {{ ansible_managed }}
+
+[mariadb]
+# Basic settings
+{{ mariadb_basic_settings_raw }}
+# Fine tuning
+{{ mariadb_fine_tuning_raw }}
+# Logging
+{{ mariadb_logging_raw }}
+# Query cache
+{{ mariadb_query_cache_raw }}
+# Character sets
+{{ mariadb_character_sets_raw }}
+# InnoDB
+{{ mariadb_innodb_raw }}
+
+[mysqldump]
+{{ mariadb_mysqldump_raw }}

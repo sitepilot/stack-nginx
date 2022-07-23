@@ -1,0 +1,194 @@
+# {{ ansible_managed }}
+{% if nginx_cache_enabled %}
+# Define path to cache and memory zone. The memory zone should be unique.
+# keys_zone=single-site-with-caching.com:100m creates the memory zone and sets the maximum size in MBs.
+# inactive=60m will remove cached items that haven't been accessed for 60 minutes or more.
+fastcgi_cache_path /www/{{ site_name }}/cache levels=1:2 keys_zone={{ site_name }}:100m inactive=60m;
+{% endif %}
+
+server {
+	# Ports to listen on
+	listen 443 ssl http2 default_server;
+	listen [::]:443 ssl http2 default_server;
+
+	# Server name to listen for
+	server_name _;
+
+	# Path to document root
+	root /www/{{ site_name }}/public;
+
+	# Paths to certificate files
+	ssl_certificate /www/{{ site_name }}/certificates/default.crt;
+    ssl_certificate_key /www/{{ site_name }}/certificates/default.key;
+
+	# File to be used as index
+	index index.php index.html;
+
+	# ---- EXCLUSIONS ---- #
+
+	# Deny all attempts to access hidden files such as .htaccess, .htpasswd, .DS_Store (Mac).
+	# Keep logging the requests to parse later (or to pass to firewall utilities such as fail2ban)
+	location ~* /\.(?!well-known\/) {
+		deny all;
+	}
+
+	# Prevent access to certain file extensions
+	location ~\.(ini|log|conf)$ {
+		deny all;
+	}
+
+	# Deny access to any files with a .php extension in the uploads directory
+	# Works in sub-directory installs and also in multisite network
+	# Keep logging the requests to parse later (or to pass to firewall utilities such as fail2ban)
+	location ~* /(?:uploads|files)/.*\.php$ {
+		deny all;
+	}
+
+	# ---- SECURITY ---- #
+
+	# Hide Nginx version in error messages and reponse headers.
+	server_tokens off;
+
+	# Don't allow pages to be rendered in an iframe on external domains.
+	add_header X-Frame-Options "SAMEORIGIN" always;
+
+	# MIME sniffing prevention
+	add_header X-Content-Type-Options "nosniff" always;
+
+	# Enable cross-site scripting filter in supported browsers.
+	add_header X-Xss-Protection "1; mode=block" always;
+
+	# Whitelist sources which are allowed to load assets (JS, CSS, etc). The following will block
+	# only none HTTPS assets, but check out https://scotthelme.co.uk/content-security-policy-an-introduction/
+	# for an in-depth guide on creating a more restrictive policy.
+	# add_header Content-Security-Policy "default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval';" always;
+
+{% if nginx_cache_enabled %}
+	# ---- CACHE ---- #
+
+	# The key to use when saving cache files, which will run through the MD5 hashing algorithm.
+	fastcgi_cache_key "$scheme$request_method$host$request_uri";
+
+	# If an error occurs when communicating with FastCGI server, return cached content.
+	# Useful for serving cached content if the PHP process dies or timeouts.
+	fastcgi_cache_use_stale error timeout updating invalid_header http_500;
+
+	# Allow caching of requests which contain the following headers.
+	fastcgi_ignore_headers Cache-Control Expires Set-Cookie;
+
+	# Show the cache status in server responses.
+	add_header X-Sitepilot-Cache $upstream_cache_status;
+
+	# Don't skip by default
+	set $skip_cache 0;
+
+	# POST requests and urls with a query string should always go to PHP
+	if ($request_method = POST) {
+		set $skip_cache 1;
+	}
+
+	if ($query_string != "") {
+		set $skip_cache 1;
+	}
+
+	# Don't cache URIs containing the following segments
+	if ($request_uri ~* "/wp-admin/|/wp-json/|/xmlrpc.php|wp-.*.php|/feed/|index.php|sitemap(_index)?.xml|/cart/|/checkout/|/my-account/") {
+		set $skip_cache 1;
+	}
+
+	# Don't use the cache for logged in users or recent commenters
+	if ($http_cookie ~* "comment_author|wordpress_[a-f0-9]+|wp-postpass|wordpress_no_cache|wordpress_logged_in|edd_items_in_cart|woocommerce_items_in_cart") {
+		set $skip_cache 1;
+	}
+
+{% endif %}
+	# ---- SSL ---- #
+
+	# Generic SSL enhancements. Use https://www.ssllabs.com/ssltest/ to test
+	# and recommend further improvements.
+
+	# Don't use outdated SSLv3 protocol. Protects against BEAST and POODLE attacks.
+	ssl_protocols TLSv1.2;
+
+	# Use secure ciphers
+	ssl_ciphers EECDH+CHACHA20:EECDH+AES;
+	ssl_ecdh_curve X25519:prime256v1:secp521r1:secp384r1;
+	ssl_prefer_server_ciphers on;
+
+	# Define the size of the SSL session cache in MBs.
+	ssl_session_cache shared:SSL:10m;
+
+	# Define the time in minutes to cache SSL sessions.
+	ssl_session_timeout 1h;
+
+	# Use HTTPS exclusively for 1 year.
+	add_header Strict-Transport-Security "max-age=31536000; includeSubdomains;";
+
+	# ---- LOCATIONS ---- #
+
+	# Global locations
+  	include locations/*;
+
+	# Default location
+	location / {
+		try_files $uri $uri/ /index.php?$args;
+	}
+
+	# PHP location
+	location ~ \.php$ {
+		try_files $uri =404;
+
+		# ---- FASTCGI PARAMS ---- #
+
+		fastcgi_param  QUERY_STRING       $query_string;
+		fastcgi_param  REQUEST_METHOD     $request_method;
+		fastcgi_param  CONTENT_TYPE       $content_type;
+		fastcgi_param  CONTENT_LENGTH     $content_length;
+
+		fastcgi_param  SCRIPT_NAME        $fastcgi_script_name;
+		fastcgi_param  SCRIPT_FILENAME    $document_root/$fastcgi_script_name;
+		fastcgi_param  REQUEST_URI        $request_uri;
+		fastcgi_param  DOCUMENT_URI       $document_uri;
+		fastcgi_param  DOCUMENT_ROOT      $document_root;
+		fastcgi_param  SERVER_PROTOCOL    $server_protocol;
+		fastcgi_param  REQUEST_SCHEME     $scheme;
+		fastcgi_param  HTTPS              $https if_not_empty;
+
+		fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;
+		fastcgi_param  SERVER_SOFTWARE    nginx/$nginx_version;
+
+		fastcgi_param  REMOTE_ADDR        $remote_addr;
+		fastcgi_param  REMOTE_PORT        $remote_port;
+		fastcgi_param  SERVER_ADDR        $server_addr;
+		fastcgi_param  SERVER_PORT        $server_port;
+		fastcgi_param  SERVER_NAME        $server_name;
+
+		# PHP only, required if PHP was built with --enable-force-cgi-redirect
+		fastcgi_param  REDIRECT_STATUS   200;
+
+		fastcgi_pass  unix:/run/php/php{{ php_version }}-fpm.sock;
+
+{% if nginx_cache_enabled %}
+		# ---- FASTCGI CACHE ---- #
+
+		# Skip cache based on rules in global/fastcgi-cache.conf.
+		fastcgi_cache_bypass $skip_cache;
+		fastcgi_no_cache $skip_cache;
+
+		# Define memory zone for caching. Should match key_zone in fastcgi_cache_path above.
+		fastcgi_cache {{ site_name }};
+
+		# Define caching time.
+		fastcgi_cache_valid 60m;
+{% endif %}
+	}
+}
+
+# Redirect http to https
+server {
+	listen 80 default_server;
+	listen [::]:80 default_server;
+	server_name _;
+
+	return 301 https://$host$request_uri;
+}

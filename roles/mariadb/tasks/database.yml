@@ -1,0 +1,22 @@
+---
+- assert:
+    that:
+      - database_user | length > 0
+      - database_name | length > 0
+      - database_password | length > 0
+
+- name: "create database {{ database_name }}"
+  mysql_db:
+    name: "{{ database_name }}"
+    state: "present"
+    login_unix_socket: "{{ mariadb_unix_socket }}"
+
+- name: "create database user {{ database_user }}"
+  mysql_user:
+    name: "{{ database_user }}"
+    password: "{{ database_password }}"
+    priv: "{{ database_name }}.*:ALL"
+    state: present
+    host: "%"
+    login_unix_socket: "{{ mariadb_unix_socket }}"
+  no_log: true

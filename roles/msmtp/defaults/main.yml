@@ -1,0 +1,7 @@
+---
+smtp_host: mail.smtp2go.com
+smtp_port: 2525
+smtp_tls: true
+smtp_user: ""
+smtp_password: ""
+smtp_from: "{{ site_name }}@sitepilot.cloud"

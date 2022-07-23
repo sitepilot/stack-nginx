@@ -1,3 +1,0 @@
----
-# Supported versions are defined in ../vars/main.yml
-mailhog_version: v1.0.1

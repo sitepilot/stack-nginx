@@ -1,8 +1,0 @@
----
-dependencies:
-  - role: php
-    tags: ["provision", "php"]
-    vars:
-      php_version: "{{ site_php_version }}"
-  - role: openresty
-    tags: ["provision", "openresty"]

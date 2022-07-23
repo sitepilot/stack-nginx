@@ -1,3 +1,0 @@
----
-# Supported versions are defined in ../vars/main.yml
-phpmyadmin_version: 5

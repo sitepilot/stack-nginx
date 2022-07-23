@@ -1,6 +1,0 @@
----
-dependencies:
-  - role: docker
-    tags: ["docker"]
-  - role: openresty
-    tags: ["openresty"]

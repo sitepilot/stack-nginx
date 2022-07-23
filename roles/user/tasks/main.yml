@@ -1,6 +1,24 @@
 ---
-- import_tasks: provision.yml
-  tags: ["provision"]
+- assert:
+    that:
+      - user_name | length > 0
+      - user_password | length > 0
+      - site_name | length > 0
 
-- import_tasks: destroy.yml
-  tags: ["never", "destroy"]
+- name: "create user"
+  user:
+    name: "{{ user_name }}"
+    group: "www-data"
+    password: "{{ user_password }}"
+    groups: "{{ user_groups }}"
+    create_home: true
+    home: "/www/{{ site_name }}"
+    shell: /bin/bash
+
+- name: "add authorized keys"
+  authorized_key:
+    user: "{{ user_name }}"
+    state: "present"
+    key: "{{ user_authorized_keys | join('\n') }}"
+    exclusive: true
+  when: user_authorized_keys | length > 0

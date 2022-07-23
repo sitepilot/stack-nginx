@@ -1,0 +1,83 @@
+---
+- assert:
+    that:
+      - site_name | string | length > 0
+      - user_name | string | length > 0
+
+- name: "add repository"
+  apt_repository:
+    repo: ppa:ondrej/nginx
+    state: present
+  register: add_repository
+
+- name: "install packages"
+  apt:
+    name:
+      - nginx
+    state: present
+    update_cache: "{{ add_repository.changed }}"
+  notify: "reload nginx"
+
+- name: "create folders"
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: "0755"
+    owner: "{{ item.user }}"
+    group: "{{ item.group }}"
+  loop:
+    - path: "/etc/nginx/global"
+      user: root
+      group: root
+    - path: "/etc/nginx/locations"
+      user: root
+      group: root
+    - path: "/www/{{ site_name }}/public"
+      user: "{{ user_name }}"
+      group: "www-data"
+    - path: "/www/{{ site_name }}/private"
+      user: "{{ user_name }}"
+      group: "www-data"
+    - path: "/www/{{ site_name }}/logs"
+      user: "{{ user_name }}"
+      group: "www-data"
+    - path: "/www/{{ site_name }}/certificates"
+      user: "{{ user_name }}"
+      group: "www-data"
+
+- name: "generate default key"
+  openssl_privatekey:
+    path: "/www/{{ site_name }}/certificates/default.key"
+  notify: reload nginx
+
+- name: "generate default csr"
+  openssl_csr:
+    path: "/www/{{ site_name }}/certificates/default.csr"
+    privatekey_path: "/www/{{ site_name }}/certificates/default.key"
+  notify: reload nginx
+
+- name: "generate default certificate"
+  openssl_certificate:
+    path: "/www/{{ site_name }}/certificates/default.crt"
+    privatekey_path: "/www/{{ site_name }}/certificates/default.key"
+    csr_path: "/www/{{ site_name }}/certificates/default.csr"
+    provider: selfsigned
+  notify: reload nginx
+
+- name: "generate configuration"
+  template:
+    src: "{{ item.template }}"
+    dest: "{{ item.destination }}"
+    mode: "0644"
+  loop:
+    - template: nginx.j2
+      destination: /etc/nginx/nginx.conf
+    - template: sites-available/default.j2
+      destination: /etc/nginx/sites-available/default
+  notify:
+    - reload nginx
+
+- name: ensure Nginx is started and enabled on boot
+  ansible.builtin.service:
+    name: nginx
+    state: started

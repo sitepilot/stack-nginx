@@ -13,6 +13,7 @@
 - name: "{{ php_version }} : install packages"
   apt:
     name:
+      - php{{ php_version }}
       - php{{ php_version }}-bcmath
       - php{{ php_version }}-cli
       - php{{ php_version }}-common
@@ -30,6 +31,8 @@
       - php{{ php_version }}-xml
       - php{{ php_version }}-zip
       - php{{ php_version }}-dev
+      - php{{ php_version }}-bz2
+      - php{{ php_version }}-mcrypt
     state: present
     update_cache: "{{ add_repository.changed }}"
   notify: "reload php{{ php_version }}-fpm"
@@ -44,52 +47,9 @@
     - template: www.j2
       destination: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
     - template: php_ini.j2
-      destination: "/etc/php/{{ php_version }}/fpm/conf.d/90-sitepilot.ini"
+      destination: "/etc/php/{{ php_version }}/fpm/php.ini"
 
-- name: "{{ php_version }} : check if realpath_turbo extension is installed"
-  stat:
-    path: "/etc/php/{{ php_version }}/mods-available/realpath-turbo.ini"
-  register: realpath_turbo_installed
-
-- name: "{{ php_version }} : download realpath_turbo extension"
-  unarchive:
-    src: https://github.com/Whissi/realpath_turbo/archive/master.zip
-    dest: /tmp
-    remote_src: true
-  when: not realpath_turbo_installed.stat.exists
-
-- name: "{{ php_version }} : configure realpath_turbo extension"
-  shell: "phpize{{ php_version }} && ./configure --with-php-config=php-config{{ php_version }}"
-  args:
-    chdir: /tmp/realpath_turbo-master
-    creates: /tmp/realpath_turbo-master/modules/realpath_turbo.so
-  when: not realpath_turbo_installed.stat.exists
-
-- name: "{{ php_version }} : build realpath_turbo extension"
-  make:
-    chdir: /tmp/realpath_turbo-master
-  when: not realpath_turbo_installed.stat.exists
-
-- name: "{{ php_version }} : install realpath_turbo extension"
-  make:
-    chdir: /tmp/realpath_turbo-master
-    target: install
-  when: not realpath_turbo_installed.stat.exists
-
-- name: "{{ php_version }} : create realpath_turbo ini file"
-  copy:
-    content: "extension=realpath_turbo.so"
-    dest: "/etc/php/{{ php_version }}/mods-available/realpath-turbo.ini"
-  when: not realpath_turbo_installed.stat.exists
-
-- name: "{{ php_version }} : enable realpath_turbo extension"
-  file:
-    src: "/etc/php/{{ php_version }}/mods-available/realpath-turbo.ini"
-    dest: "/etc/php/{{ php_version }}/fpm/conf.d/20-realpath-turbo.ini"
-    state: link
-  when: not realpath_turbo_installed.stat.exists
-
-- name: "{{ php_version }} : cleanup realpath_turbo source files"
-  file:
-    state: absent
-    path: /tmp/realpath_turbo-master
+- name: "{{ php_version }} : set the php version"
+  alternatives:
+    name: php
+    path: /usr/bin/php{{ php_version }}

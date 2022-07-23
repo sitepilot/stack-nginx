@@ -1,0 +1,216 @@
+# {{ ansible_managed }}
+user {{ user_name }} www-data;
+
+# Set to number of CPU cores, auto will try to autodetect.
+worker_processes auto;
+
+# Maximum open file descriptors per process. Should be greater than worker_connections.
+worker_rlimit_nofile 8192;
+
+# File that stores the process ID. Rarely needs changing.
+pid /run/nginx.pid;
+
+events {
+	# Set the maximum number of connection each worker process can open. Anything higher than this
+	# will require Unix optimisations.
+	worker_connections 8000;
+
+	# Accept all new connections as they're opened.
+	multi_accept on;
+}
+
+http {
+	# ---- HTTP ---- #
+
+	# Speed up file transfer by using sendfile().
+	sendfile on;
+
+	# Don't send partial frames, which increases throughput.
+	tcp_nopush on;
+
+	# Don't wait to send data in keep-alive state.
+	tcp_nodelay on;
+
+	# ---- MIME TYPES ---- #
+
+	types {
+		text/html                             html htm shtml;
+		text/css                              css;
+		text/xml                              xml;
+		image/gif                             gif;
+		image/jpeg                            jpeg jpg;
+		application/javascript                js;
+		application/atom+xml                  atom;
+		application/rss+xml                   rss;
+
+		text/mathml                           mml;
+		text/plain                            txt;
+		text/vnd.sun.j2me.app-descriptor      jad;
+		text/vnd.wap.wml                      wml;
+		text/x-component                      htc;
+
+		image/png                             png;
+		image/tiff                            tif tiff;
+		image/vnd.wap.wbmp                    wbmp;
+		image/x-icon                          ico;
+		image/x-jng                           jng;
+		image/x-ms-bmp                        bmp;
+		image/svg+xml                         svg svgz;
+		image/webp                            webp;
+
+		application/font-woff                 woff;
+		application/java-archive              jar war ear;
+		application/json                      json;
+		application/mac-binhex40              hqx;
+		application/msword                    doc;
+		application/pdf                       pdf;
+		application/postscript                ps eps ai;
+		application/rtf                       rtf;
+		application/vnd.apple.mpegurl         m3u8;
+		application/vnd.ms-excel              xls;
+		application/vnd.ms-fontobject         eot;
+		application/vnd.ms-powerpoint         ppt;
+		application/vnd.wap.wmlc              wmlc;
+		application/vnd.google-earth.kml+xml  kml;
+		application/vnd.google-earth.kmz      kmz;
+		application/x-7z-compressed           7z;
+		application/x-cocoa                   cco;
+		application/x-java-archive-diff       jardiff;
+		application/x-java-jnlp-file          jnlp;
+		application/x-makeself                run;
+		application/x-perl                    pl pm;
+		application/x-pilot                   prc pdb;
+		application/x-rar-compressed          rar;
+		application/x-redhat-package-manager  rpm;
+		application/x-sea                     sea;
+		application/x-shockwave-flash         swf;
+		application/x-stuffit                 sit;
+		application/x-tcl                     tcl tk;
+		application/x-x509-ca-cert            der pem crt;
+		application/x-xpinstall               xpi;
+		application/xhtml+xml                 xhtml;
+		application/xspf+xml                  xspf;
+		application/zip                       zip;
+
+		application/octet-stream              bin exe dll;
+		application/octet-stream              deb;
+		application/octet-stream              dmg;
+		application/octet-stream              iso img;
+		application/octet-stream              msi msp msm;
+
+		application/vnd.openxmlformats-officedocument.wordprocessingml.document    docx;
+		application/vnd.openxmlformats-officedocument.spreadsheetml.sheet          xlsx;
+		application/vnd.openxmlformats-officedocument.presentationml.presentation  pptx;
+
+		audio/midi                            mid midi kar;
+		audio/mpeg                            mp3;
+		audio/ogg                             ogg;
+		audio/x-m4a                           m4a;
+		audio/x-realaudio                     ra;
+
+		video/3gpp                            3gpp 3gp;
+		video/mp2t                            ts;
+		video/mp4                             mp4;
+		video/mpeg                            mpeg mpg;
+		video/quicktime                       mov;
+		video/webm                            webm;
+		video/x-flv                           flv;
+		video/x-m4v                           m4v;
+		video/x-mng                           mng;
+		video/x-ms-asf                        asx asf;
+		video/x-ms-wmv                        wmv;
+		video/x-msvideo                       avi;
+	}
+
+	default_type application/octet-stream;
+
+	# ---- LIMITS ---- #
+
+	# How long each connection should stay open for.
+	keepalive_timeout 15;
+
+	# Timeout for reading client request body.
+	client_body_timeout 30;
+
+	# Timeout for reading client request header.
+	client_header_timeout 30;
+
+	# Timeout for transmitting reponse to client.
+	send_timeout 30;
+
+	# Set the maximum allowed size of client request body. This should be set
+	# to the value of files sizes you wish to upload to the WordPress Media Library.
+	# You may also need to change the values `upload_max_filesize` and `post_max_size` within
+	# your php.ini for the changes to apply.
+	client_max_body_size 128m;
+
+	# ---- GZIP ---- #
+
+	# Gzip
+	gzip on;
+
+	# Disable Gzip on IE6.
+	gzip_disable "msie6";
+
+	# Allow proxies to cache both compressed and regular version of file.
+	# Avoids clients that don't support Gzip outputting gibberish.
+	gzip_vary on;
+
+	# Compress data, even when the client connects through a proxy.
+	gzip_proxied any;
+
+	# The level of compression to apply to files. A higher compression level increases
+	# CPU usage. Level 5 is a happy medium resulting in roughly 75% compression.
+	gzip_comp_level 5;
+
+	# The minimum HTTP version of a request to perform compression.
+	gzip_http_version 1.1;
+
+	# Don't compress files smaller than 256 bytes, as size reduction will be negligible.
+	gzip_min_length 256;
+
+	# Compress the following MIME types.
+	gzip_types
+		application/atom+xml
+		application/javascript
+		application/json
+		application/ld+json
+		application/manifest+json
+		application/rss+xml
+		application/vnd.geo+json
+		application/vnd.ms-fontobject
+		application/x-font-ttf
+		application/x-web-app-manifest+json
+		application/xhtml+xml
+		application/xml
+		font/opentype
+		image/bmp
+		image/svg+xml
+		image/x-icon
+		text/cache-manifest
+		text/css
+		text/plain
+		text/vcard
+		text/vnd.rim.location.xloc
+		text/vtt
+		text/x-component
+		text/x-cross-domain-policy;
+	# text/html is always compressed when enabled.
+
+	# ---- GENERAL ---- #
+
+	# Some WP plugins that push large amounts of data via cookies
+	# can cause 500 HTTP errors if these values aren't increased.
+	fastcgi_buffers 16 16k;
+	fastcgi_buffer_size 32k;
+
+	# Default Logs
+	error_log /www/{{ site_name }}/logs/error.log warn;
+	access_log /www/{{ site_name }}/logs/access.log;
+
+	# Modules
+	include /etc/nginx/conf.d/*.conf;
+	
+	# Sites
+	include /etc/nginx/sites-enabled/*;
+}

@@ -1,0 +1,87 @@
+#!/bin/bash
+
+set -e
+set -u
+set -o pipefail
+
+# ---------------------------------------------------------- #
+# Configuration
+# ---------------------------------------------------------- #
+SSH_PORT=2222
+HTTP_PORT=8080
+HTTPS_PORT=8443
+CONTAINER=test-container
+
+# ---------------------------------------------------------- #
+# Defaults
+# ---------------------------------------------------------- #
+COLOR_RED='\033[0;31m'
+COLOR_NONE='\033[0m'
+
+# ---------------------------------------------------------- #
+# Functions
+# ---------------------------------------------------------- #
+function log {
+    DATETIME=$(date '+%Y/%m/%d %H:%M:%S');
+    echo -e "[STACK][$DATETIME] $1"
+}
+
+function error {
+    log "${COLOR_RED}$1${COLOR_NONE}"
+    exit
+}
+
+function init {
+    lxc launch ubuntu:focal $CONTAINER || return 1
+        
+    lxc config device add $CONTAINER ssh proxy listen=tcp:0.0.0.0:$SSH_PORT connect=tcp:127.0.0.1:22 || return 1
+    lxc config device add $CONTAINER http proxy listen=tcp:0.0.0.0:$HTTP_PORT connect=tcp:127.0.0.1:80 || return 1
+    lxc config device add $CONTAINER https proxy listen=tcp:0.0.0.0:$HTTPS_PORT connect=tcp:127.0.0.1:443 || return 1
+
+    sleep 5
+
+    chmod -R 600 ./ssh/id_ed25519
+
+    lxc file push ./ssh/authorized_keys $CONTAINER/root/.ssh/authorized_keys
+
+    lxc exec $CONTAINER -- chown root:root /root/.ssh/authorized_keys || return 1
+}
+
+function provision {
+    ansible-playbook provision.yml -e host=test-site || return 1
+}
+
+function snapshot {
+    lxc snapshot $CONTAINER || return 1
+}
+
+function restore {
+    lxc restore $CONTAINER $1 || return 1
+}
+
+function destroy {
+    lxc delete $CONTAINER -f || return 1
+}
+
+# ---------------------------------------------------------- #
+# Commands
+# ---------------------------------------------------------- #
+case "$1" in
+    init)
+        init || error "Failed to initialize test container."
+        ;;
+    provision)
+        provision || error "Failed to provision test container."
+        ;;
+    snapshot)
+        snapshot || error "Failed to create a snapshot."
+        ;;
+    restore)
+        restore $2 || error "Failed to restore a snapshot."
+        ;;
+    destroy)
+        destroy || error "Failed to destroy test container."
+        ;;
+    *)
+        log "No command specified."
+esac

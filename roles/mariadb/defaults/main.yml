@@ -1,4 +1,78 @@
 ---
-# Supported versions are defined in ../vars/main.yml
-mariadb_version: ""
-mariadb_root_password: ""
+# Database
+database_name: ""
+database_user: ""
+database_password: ""
+
+# Configure the following to use official MariaDB repository
+# see: https://downloads.mariadb.org/mariadb/repositories
+mariadb_use_official_repo: true
+mariadb_use_official_repo_url: https://deb.mariadb.org
+mariadb_use_official_repo_version: 10.5
+mariadb_enabled_on_startup: true
+
+# The following is set to true by default but you may consider setting it to
+# false on production servers to prevent ansible from restarting mariadb server.
+mariadb_can_restart: true
+
+# Whether global conf file should be updated on every run
+mariadb_overwrite_global_config_file: true
+
+# MariaDB configuration file
+mariadb_config_file: /etc/mysql/mariadb.cnf
+
+# Basic settings
+mariadb_datadir: /var/lib/mysql
+mariadb_port: 3306
+mariadb_bind_address: 127.0.0.1
+mariadb_unix_socket: /run/mysqld/mysqld.sock
+mariadb_basic_settings_raw: |
+  user                  = mysql
+  pid-file              = /run/mysqld/mysqld.pid
+  socket                = {{ mariadb_unix_socket }}
+  basedir               = /usr
+  datadir               = {{ mariadb_datadir }}
+  tmpdir                = /tmp
+  lc-messages-dir       = /usr/share/mysql
+  lc_messages           = en_US
+  skip-external-locking
+  port                  = {{ mariadb_port }}
+  bind-address          = {{ mariadb_bind_address }}
+
+# Fine tuning
+mariadb_fine_tuning_raw: |
+  max_connections         = 100
+  connect_timeout         = 5
+  wait_timeout            = 600
+  max_allowed_packet      = 16M
+  thread_cache_size       = 128
+  sort_buffer_size        = 4M
+  bulk_insert_buffer_size = 16M
+  tmp_table_size          = 32M
+  max_heap_table_size     = 32M
+  skip-name-resolve       = 1
+
+# Query cache
+mariadb_query_cache_raw: |
+  query_cache_size        = 16M
+
+# Logging
+mariadb_logging_raw: |
+  log_error = /var/log/mysql/error.log
+
+# Character sets
+mariadb_character_sets_raw: |
+  character-set-server = utf8mb4
+  collation-server     = utf8mb4_general_ci
+
+# InnoDB
+mariadb_innodb_raw: |
+  # InnoDB is enabled by default with a 10MB datafile in /var/lib/mysql/.
+  # Read the manual for more InnoDB related options. There are many!
+
+# mariadbdump
+mariadb_mysqldump_raw: |
+  quick
+  quote-names
+  max_allowed_packet = 16M
+

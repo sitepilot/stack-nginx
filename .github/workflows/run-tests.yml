@@ -27,35 +27,10 @@ jobs:
       - name: Lint Ansible files
         run: ansible-lint ./roles
 
-      - name: Start test container
+      - name: Initialize test container
         run: |
-          sudo modprobe ip6table_filter
-          docker-compose up -d
-          chmod 600 ./docker/filesystem/root/.ssh/id_ed25519
+          ./container init
 
-      - name: Test server playbooks
+      - name: Test provision playbook
         run: |
-          ansible-playbook server.yml -e host=test-server
-
-      - name: Test user playbooks
-        run: |
-          ansible-playbook user.yml -e @tests/users/test-user.yml
-          ansible-playbook user.yml -e @tests/users/test-user.yml -t destroy
-
-      - name: Test site playbooks
-        run: |
-          ansible-playbook site.yml -e @tests/sites/test-site-80.yml
-          ansible-playbook site.yml -e @tests/sites/test-site-80.yml -t backup
-          ansible-playbook site.yml -e @tests/sites/test-site-80.yml -t backup/list
-          ansible-playbook site.yml -e @tests/sites/test-site-80.yml -t backup/restore
-          ansible-playbook site.yml -e @tests/sites/test-site-80.yml -t backup/destroy
-          ansible-playbook site.yml -e @tests/sites/test-site-80.yml -t destroy
-
-      - name: Test database playbooks
-        run: |
-          ansible-playbook database.yml -e @tests/databases/test-database.yml
-          ansible-playbook database.yml -e @tests/databases/test-database.yml -t backup
-          ansible-playbook database.yml -e @tests/databases/test-database.yml -t backup/list
-          ansible-playbook database.yml -e @tests/databases/test-database.yml -t backup/restore
-          ansible-playbook database.yml -e @tests/databases/test-database.yml -t backup/destroy
-          ansible-playbook database.yml -e @tests/databases/test-database.yml -t destroy
+          ./container provision

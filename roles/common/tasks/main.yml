@@ -1,8 +1,7 @@
 ---
 - assert:
     that:
-      - platform | length > 0
-      - hostname | length > 0
+      - hostname | string | length > 0
 
 - include: base.yml
   tags: "base"
@@ -12,9 +11,6 @@
 
 - include: sshd.yml
   tags: "sshd"
-
-- include: firewall.yml
-  tags: "firewall"
 
 - include: unattended-upgrades.yml
   tags: "unattended-upgrades"

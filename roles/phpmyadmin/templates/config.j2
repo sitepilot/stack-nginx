@@ -1,0 +1,32 @@
+<?php
+// {{ ansible_managed }}
+
+/* Servers configuration */
+$i = 0;
+
+/* Server: localhost [1] */
+$i++;
+$cfg['Servers'][$i]['verbose'] = '';
+$cfg['Servers'][$i]['host'] = 'localhost';
+$cfg['Servers'][$i]['port'] = '';
+$cfg['Servers'][$i]['socket'] = '';
+$cfg['Servers'][$i]['connect_type'] = 'socket';
+$cfg['Servers'][$i]['auth_type'] = 'cookie';
+$cfg['Servers'][$i]['user'] = 'root';
+$cfg['Servers'][$i]['password'] = '';
+
+/* End of servers configuration */
+
+$cfg['DefaultLang'] = 'en';
+$cfg['ServerDefault'] = 1;
+$cfg['UploadDir'] = '';
+$cfg['SaveDir'] = '';
+$cfg['UserprefsDisallow'] = array('VersionCheck', 'SendErrorReports');
+$cfg['ExecTimeLimit'] = 0;
+$cfg['VersionCheck'] = false;
+$cfg['SendErrorReports'] = 'never';
+$cfg['TitleDefault'] = '@HTTP_HOST@ | Sitepilot MySQL Editor';
+$cfg['TitleTable'] = '@HTTP_HOST@ / @VSERVER@ / @DATABASE@ / @TABLE@ | Sitepilot MySQL Editor';
+$cfg['TitleDatabase'] = '@HTTP_HOST@ / @VSERVER@ / @DATABASE@ | Sitepilot MySQL Editor';
+$cfg['TitleServer'] = '@HTTP_HOST@ / @VSERVER@ | Sitepilot MySQL Editor';
+$cfg['Servers'][$i]['hide_db'] = 'information_schema';

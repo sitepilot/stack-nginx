@@ -1,7 +1,15 @@
 # {{ ansible_managed }}
-location /-/phpmyadmin/ {
-  proxy_set_header Host $host;
-  proxy_set_header X-Real-IP $remote_addr;
-  proxy_set_header X-Forwarded-Proto $scheme;
-  proxy_pass http://127.0.0.1:8001/;
+location ~* ^/-/phpmyadmin(?<pmauri>/.*)? {
+    alias /usr/share/phpmyadmin/;
+
+    index index.php;
+
+    try_files $pmauri $pmauri/ =404;
+
+    location ~ \.php$ {
+        include fastcgi.conf;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$pmauri;
+        fastcgi_pass unix:/var/run/php/php{{ php_version }}-fpm.sock;
+    }
 }

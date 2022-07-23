@@ -8,21 +8,14 @@
       - curl
       - zip
       - unzip
-      - acl
+      - restic
+      - git
       - cron
       - nano
       - rsyslog
-      - restic
-      - bubblewrap
     state: present
     update_cache: true
     cache_valid_time: 3600
-
-- name: "base : install python libraries"
-  pip:
-    name:
-      - cryptography
-    state: present
 
 - name: "base : enable and start rsyslog"
   service:
@@ -34,11 +27,3 @@
   timezone:
     name: "{{ timezone }}"
 
-- name: "base : create base folder"
-  file:
-    path: "{{ item.path }}"
-    state: directory
-    mode: "{{ item.mode }}"
-  loop:
-    - path: "/opt/sitepilot"
-      mode: "0755"
