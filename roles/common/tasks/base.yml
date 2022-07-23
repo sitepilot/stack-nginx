@@ -26,4 +26,3 @@
 - name: "base : set timezone"
   timezone:
     name: "{{ timezone }}"
-
