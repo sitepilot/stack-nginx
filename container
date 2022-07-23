@@ -28,7 +28,7 @@ function log {
 
 function error {
     log "${COLOR_RED}$1${COLOR_NONE}"
-    exit
+    exit 1
 }
 
 function init {
