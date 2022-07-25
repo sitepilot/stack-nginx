@@ -46,6 +46,7 @@
     path: "/www/{{ site_name }}/phpmyadmin/tmp"
     owner: "{{ user_name }}"
     group: www-data
+    mode: 0644
 
 - name: "generate config"
   template:
