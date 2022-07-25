@@ -121,8 +121,11 @@ server {
 	# Define the time in minutes to cache SSL sessions.
 	ssl_session_timeout 1h;
 
+{% if nginx_hsts_enabled %}
 	# Use HTTPS exclusively for 1 year.
 	add_header Strict-Transport-Security "max-age=31536000; includeSubdomains;";
+
+{% endif %}
 
 	# ---- LOCATIONS ---- #
 
@@ -163,11 +166,6 @@ server {
 		fastcgi_param  SERVER_PORT        $server_port;
 		fastcgi_param  SERVER_NAME        $server_name;
 
-		# PHP only, required if PHP was built with --enable-force-cgi-redirect
-		fastcgi_param  REDIRECT_STATUS   200;
-
-		fastcgi_pass  unix:/run/php/php{{ php_version }}-fpm.sock;
-
 {% if nginx_cache_enabled %}
 		# ---- FASTCGI CACHE ---- #
 
@@ -180,7 +178,14 @@ server {
 
 		# Define caching time.
 		fastcgi_cache_valid 60m;
+
+		# Sitepilot cache params
+		fastcgi_param SITEPILOT_CACHE on;
+		fastcgi_param SITEPILOT_CACHE_ZONE {{ site_name }};
+		fastcgi_param SITEPILOT_CACHE_PATH /www/{{ site_name }}/cache;
+
 {% endif %}
+		fastcgi_pass  unix:/run/php/php{{ php_version }}-fpm.sock;
 	}
 }
 

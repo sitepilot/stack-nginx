@@ -1,2 +1,3 @@
 ---
 nginx_cache_enabled: false
+nginx_hsts_enabled: false
