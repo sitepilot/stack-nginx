@@ -2,7 +2,7 @@
 listen = /run/php/php{{ php_version }}-fpm.sock
 listen.owner = www-data
 listen.group = www-data
-user = {{ site_name }}
+user = {{ user_name }}
 group = www-data
 pm = ondemand
 pm.max_children = {{ php_max_children }}
