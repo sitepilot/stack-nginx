@@ -30,3 +30,5 @@ $cfg['TitleTable'] = '@HTTP_HOST@ / @VSERVER@ / @DATABASE@ / @TABLE@ | Sitepilot
 $cfg['TitleDatabase'] = '@HTTP_HOST@ / @VSERVER@ / @DATABASE@ | Sitepilot MySQL Editor';
 $cfg['TitleServer'] = '@HTTP_HOST@ / @VSERVER@ | Sitepilot MySQL Editor';
 $cfg['Servers'][$i]['hide_db'] = 'information_schema';
+
+require_once "/var/lib/phpmyadmin/blowfish_secret.inc.php";
