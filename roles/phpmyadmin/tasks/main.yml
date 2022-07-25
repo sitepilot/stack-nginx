@@ -1,5 +1,5 @@
 ---
-- name: "{{ php_version }} : add repository"
+- name: "add repository"
   apt_repository:
     repo: ppa:phpmyadmin/ppa
     state: present
