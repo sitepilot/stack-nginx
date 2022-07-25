@@ -32,16 +32,16 @@
     - path: "/etc/nginx/locations"
       user: root
       group: root
+    - path: "/www/{{ site_name }}/logs"
+      user: "root"
+      group: "root"
+    - path: "/www/{{ site_name }}/certificates"
+      user: "root"
+      group: "root"
     - path: "/www/{{ site_name }}/public"
       user: "{{ user_name }}"
       group: "www-data"
     - path: "/www/{{ site_name }}/private"
-      user: "{{ user_name }}"
-      group: "www-data"
-    - path: "/www/{{ site_name }}/logs"
-      user: "{{ user_name }}"
-      group: "www-data"
-    - path: "/www/{{ site_name }}/certificates"
       user: "{{ user_name }}"
       group: "www-data"
 
@@ -74,10 +74,12 @@
       destination: /etc/nginx/nginx.conf
     - template: sites-available/default.j2
       destination: /etc/nginx/sites-available/default
+    - template: logrotate.j2
+      destination: /etc/logrotate.d/www-logs
   notify:
     - reload nginx
 
-- name: ensure Nginx is started and enabled on boot
+- name: ensure nginx is started and enabled on boot
   ansible.builtin.service:
     name: nginx
     state: started

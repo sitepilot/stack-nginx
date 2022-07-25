@@ -1,0 +1,15 @@
+/www/*/logs/*.log {
+  daily
+  missingok
+  rotate 4
+  dateext
+  dateformat -%Y-%m-%d-%s
+  compress
+  delaycompress
+  notifempty
+  create 0664 root root
+  sharedscripts
+  postrotate
+    invoke-rc.d nginx rotate >/dev/null 2>&1
+  endscript
+}
