@@ -1,33 +1,58 @@
 ---
-- name: "add repository"
-  apt_repository:
-    repo: ppa:phpmyadmin/ppa
-    state: present
-  register: add_repository
+- name: "check version"
+  stat:
+    path: "/www/{{ site_name }}/phpmyadmin/.version-{{ phpmyadmin_version }}"
+  register: version_check
 
-- name: "install packages"
-  apt:
-    name:
-      - phpmyadmin
-    state: present
-    update_cache: "{{ add_repository.changed }}"
+- name: "cleanup old phpmyadmin files"
+  file:
+    state: absent
+    path: "/www/{{ site_name }}/phpmyadmin"
+  when: not version_check.stat.exists
 
-- name: "create temp dir"
-  ansible.builtin.file:
-    path: /var/lib/phpmyadmin/tmp/
-    state: directory
-    mode: "0700"
+- name: "download and unzip source"
+  unarchive:
+    src: "https://files.phpmyadmin.net/phpMyAdmin/{{ phpmyadmin_version }}/phpMyAdmin-{{ phpmyadmin_version }}-all-languages.zip"
+    dest: "/www/{{ site_name }}"
+    remote_src: yes
+  when: not version_check.stat.exists
+
+- name: rename source folder
+  command: "mv /www/{{ site_name }}/phpMyAdmin-{{ phpmyadmin_version }}-all-languages /www/{{ site_name }}/phpmyadmin"
+  when: not version_check.stat.exists
+
+- name: create version file
+  copy:
+    content: "{{ phpmyadmin_version }}"
+    dest: "/www/{{ site_name }}/phpmyadmin/.version-{{ phpmyadmin_version }}"
+  when: not version_check.stat.exists
+
+- name: "check blowfish file"
+  stat:
+    path: "/www/{{ site_name }}/phpmyadmin/blowfish.inc.php"
+  register: blowfish_check
+
+- name: "generate blowfish secret"
+  template:
+    src: blowfish.j2
+    dest: "/www/{{ site_name }}/phpmyadmin/blowfish.inc.php"
+  when: not blowfish_check.stat.exists
+
+- name: "setup permissions"
+  file:
+    state: "directory"
+    path: "/www/{{ site_name }}/phpmyadmin/tmp"
     owner: "{{ user_name }}"
-    group: "www-data"
+    group: www-data
 
 - name: "generate config"
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    mode: "0644"
+    mode: 0644
   loop:
     - src: nginx.j2
       dest: /etc/nginx/locations/phpmyadmin.conf
     - src: config.j2
-      dest: /etc/phpmyadmin/config.inc.php
+      dest: "/www/{{ site_name }}/phpmyadmin/config.inc.php"
   notify: reload nginx

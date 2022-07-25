@@ -1,6 +1,6 @@
 # {{ ansible_managed }}
 location ~* ^/-/phpmyadmin(?<pmauri>/.*)? {
-    alias /usr/share/phpmyadmin/;
+    alias /www/{{ site_name }}/phpmyadmin/;
 
     index index.php;
 
