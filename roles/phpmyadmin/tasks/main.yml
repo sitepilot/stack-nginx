@@ -14,7 +14,7 @@
   unarchive:
     src: "https://files.phpmyadmin.net/phpMyAdmin/{{ phpmyadmin_version }}/phpMyAdmin-{{ phpmyadmin_version }}-all-languages.zip"
     dest: "/www/{{ site_name }}"
-    remote_src: yes
+    remote_src: true
   when: not version_check.stat.exists
 
 - name: rename source folder
@@ -25,6 +25,7 @@
   copy:
     content: "{{ phpmyadmin_version }}"
     dest: "/www/{{ site_name }}/phpmyadmin/.version-{{ phpmyadmin_version }}"
+    mode: 0644
   when: not version_check.stat.exists
 
 - name: "check blowfish file"
@@ -36,6 +37,7 @@
   template:
     src: blowfish.j2
     dest: "/www/{{ site_name }}/phpmyadmin/blowfish.inc.php"
+    mode: 0644
   when: not blowfish_check.stat.exists
 
 - name: "setup permissions"
