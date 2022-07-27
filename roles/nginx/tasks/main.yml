@@ -80,6 +80,7 @@
     - reload nginx
 
 - name: ensure nginx is started and enabled on boot
-  ansible.builtin.service:
+  service:
     name: nginx
     state: started
+    enabled: true
