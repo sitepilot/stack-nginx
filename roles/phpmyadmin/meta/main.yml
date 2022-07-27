@@ -1,7 +1,7 @@
 ---
 dependencies:
-  - role: user
-    tags: ["user"]
+  - role: nginx
+    tags: ["nginx"]
 
   - role: php
     tags: ["php"]
