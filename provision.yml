@@ -19,8 +19,13 @@
     - role: common
       tags: common
 
+    - role: php
+      tags: php
+      when: "'php' in stack"
+
     - role: nginx
       tags: nginx
+      when: "'nginx' in stack"
 
     - role: mariadb
       tags: mariadb

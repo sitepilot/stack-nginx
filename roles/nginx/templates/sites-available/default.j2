@@ -137,6 +137,7 @@ server {
 		try_files $uri $uri/ /index.php?$args;
 	}
 
+{% if php_version is defined %}
 	# PHP location
 	location ~ \.php$ {
 		try_files $uri =404;
@@ -187,6 +188,7 @@ server {
 {% endif %}
 		fastcgi_pass  unix:/run/php/php{{ php_version }}-fpm.sock;
 	}
+{% endif %}
 }
 
 # Redirect http to https

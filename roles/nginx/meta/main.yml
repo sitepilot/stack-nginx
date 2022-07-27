@@ -2,6 +2,3 @@
 dependencies:
   - role: user
     tags: ["user"]
-
-  - role: php
-    tags: ["php"]
