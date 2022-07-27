@@ -1,7 +1,0 @@
----
-dependencies:
-  - role: nginx
-    tags: ["nginx"]
-
-  - role: php
-    tags: ["php"]

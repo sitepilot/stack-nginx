@@ -1,4 +1,10 @@
 ---
+- assert:
+    that:
+      - "'php' in stack"
+      - "'nginx' in stack"
+      - "'mariadb' in stack"
+
 - name: "check version"
   stat:
     path: "/www/{{ site_name }}/phpmyadmin/.version-{{ phpmyadmin_version }}"

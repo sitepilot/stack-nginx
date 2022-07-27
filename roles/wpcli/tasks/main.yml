@@ -1,7 +1,7 @@
 ---
-- name: "check if php is installed"
-  command: "php --version"
-  changed_when: false
+- assert:
+    that:
+      - "'php' in stack"
 
 - name: "download and save"
   get_url:
