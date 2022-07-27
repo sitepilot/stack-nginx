@@ -1,0 +1,4 @@
+---
+dependencies:
+  - role: user
+    tags: ["user"]
