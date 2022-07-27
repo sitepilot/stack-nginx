@@ -11,7 +11,17 @@ tests:
       database_name: "test-site-prod"
       database_user: "test-user"
       database_password: "secret"
-      stack: ["mariadb", "wpcli", "composer", "msmtp", "phpmyadmin", "nodejs"]
+      stack:
+        [
+          "nginx",
+          "php",
+          "mariadb",
+          "wpcli",
+          "composer",
+          "msmtp",
+          "phpmyadmin",
+          "nodejs",
+        ]
       ansible_user: root
       ansible_host: 127.0.0.1
       ansible_port: 2222
