@@ -3,14 +3,14 @@
     that:
       - hostname | string | length > 0
 
-- include: base.yml
+- import_tasks: base.yml
   tags: "base"
 
-- include: hostname.yml
+- import_tasks: hostname.yml
   tags: "hostname"
 
-- include: sshd.yml
+- import_tasks: sshd.yml
   tags: "sshd"
 
-- include: unattended-upgrades.yml
+- import_tasks: unattended-upgrades.yml
   tags: "unattended-upgrades"
