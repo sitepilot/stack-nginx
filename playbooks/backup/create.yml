@@ -1,0 +1,61 @@
+---
+- name: "backup files"
+  hosts: "{{ host }}"
+  vars:
+    site_name: ""
+    database_name: ""
+    backup_repo: ""
+    backup_tag: "site"
+    backup_password: ""
+    backup_s3_key: ""
+    backup_s3_secret: ""
+  tasks:
+    - package_facts:
+        manager: "auto"
+
+    - assert:
+        that:
+          - site_name | length > 0
+          - backup_repo | length > 0
+          - backup_tag | length > 0
+          - backup_password | length > 0
+          - "'restic' in ansible_facts.packages"
+
+    - set_fact:
+        backup_path: "/www/{{ site_name }}"
+        dump_file: "/www/{{ site_name }}/private/{{ site_name }}.sql"
+
+    - name: "initialize backup respository"
+      command: "restic -r {{ backup_repo }} init"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ backup_s3_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ backup_s3_secret }}"
+        RESTIC_PASSWORD: "{{ backup_password }}"
+      register: command_result
+      failed_when: false
+      changed_when: false
+
+    - name: "create database dump"
+      mysql_db:
+        state: dump
+        name: "{{ database_name }}"
+        target: "{{ dump_file }}"
+        single_transaction: true
+        login_unix_socket: "/run/mysqld/mysqld.sock"
+      when: database_name | length > 0
+
+    - name: "backup files"
+      command: "restic -r {{ backup_repo }} --tag {{ backup_tag }} --quiet --json backup ./public ./private ./certificates"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ backup_s3_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ backup_s3_secret }}"
+        RESTIC_PASSWORD: "{{ backup_password }}"
+      args:
+        chdir: "{{ backup_path }}"
+      changed_when: false
+      register: result
+
+    - name: "result"
+      debug:
+        msg: "{{ item | from_json }}"
+      loop: "{{ result.stdout_lines }}"

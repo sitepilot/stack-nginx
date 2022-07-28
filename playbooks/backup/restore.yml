@@ -1,0 +1,50 @@
+---
+- name: "restore backup"
+  hosts: "{{ host }}"
+  vars:
+    site_name: ""
+    database_name: ""
+    backup_id: ""
+    backup_repo: ""
+    backup_password: ""
+    backup_s3_key: ""
+    backup_s3_secret: ""
+  tasks:
+    - package_facts:
+        manager: "auto"
+
+    - assert:
+        that:
+          - site_name | length > 0
+          - backup_id | length > 0
+          - backup_repo | length > 0
+          - backup_password | length > 0
+          - "'restic' in ansible_facts.packages"
+
+    - set_fact:
+        restore_path: "/www/{{ site_name }}"
+        dump_file: "/www/{{ site_name }}/private/{{ site_name }}.sql"
+
+    - name: "restore site files"
+      command: "restic -r {{ backup_repo }} restore {{ backup_id }} --target ."
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ backup_s3_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ backup_s3_secret }}"
+        RESTIC_PASSWORD: "{{ backup_password }}"
+      args:
+        chdir: "{{ restore_path }}"
+      register: result
+      changed_when: false
+
+    - name: "restore database"
+      mysql_db:
+        state: import
+        name: "{{ database_name }}"
+        target: "{{ dump_file }}"
+        force: true
+        login_unix_socket: "/run/mysqld/mysqld.sock"
+      when: database_name | length > 0
+
+    - name: "result"
+      debug:
+        msg: "{{ result.stdout_lines | last }}"
