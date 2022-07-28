@@ -21,4 +21,3 @@
     state: "present"
     key: "{{ user_authorized_keys | join('\n') }}"
     exclusive: true
-
