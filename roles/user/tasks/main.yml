@@ -21,4 +21,4 @@
     state: "present"
     key: "{{ user_authorized_keys | join('\n') }}"
     exclusive: true
-  when: user_authorized_keys | length > 0
+
