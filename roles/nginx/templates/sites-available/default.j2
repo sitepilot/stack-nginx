@@ -15,11 +15,11 @@ server {
 	server_name _;
 
 	# Path to document root
-	root /www/{{ site_name }}/public;
+	root /www/{{ site_name }}/public/{{ nginx_public_dir }};
 
 	# Paths to certificate files
 	ssl_certificate /www/{{ site_name }}/certificates/default.crt;
-    ssl_certificate_key /www/{{ site_name }}/certificates/default.key;
+	ssl_certificate_key /www/{{ site_name }}/certificates/default.key;
 
 	# File to be used as index
 	index index.php index.html;
@@ -122,11 +122,15 @@ server {
 	ssl_session_timeout 1h;
 
 {% if nginx_hsts_enabled %}
-	# Use HTTPS exclusively for 1 year.
-	add_header Strict-Transport-Security "max-age=31536000; includeSubdomains;";
+    # Use HTTPS exclusively for 1 year.
+    add_header Strict-Transport-Security "max-age=31536000; includeSubdomains;";
 
 {% endif %}
+{% if nginx_block_robots %}
+    # Block robots
+    add_header X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
 
+{% endif %}
 	# ---- LOCATIONS ---- #
 
 	# Global locations

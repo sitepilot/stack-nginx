@@ -1,3 +1,5 @@
 ---
+nginx_public_dir: ''
 nginx_cache_enabled: false
 nginx_hsts_enabled: false
+nginx_block_robots: false
