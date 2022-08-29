@@ -3,6 +3,6 @@ nginx_public_dir: ''
 nginx_cache_enabled: false
 nginx_hsts_enabled: false
 nginx_block_robots: false
-nginx_real_ip_from: 
+nginx_real_ip_from:
   - 127.0.0.1
 nginx_real_ip_header: 'CF_CONNECTING_IP'
