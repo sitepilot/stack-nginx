@@ -8,7 +8,7 @@ database_password: ""
 # see: https://downloads.mariadb.org/mariadb/repositories
 mariadb_use_official_repo: true
 mariadb_use_official_repo_url: https://deb.mariadb.org
-mariadb_use_official_repo_version: 10.5
+mariadb_use_official_repo_version: 10.6
 mariadb_enabled_on_startup: true
 
 # The following is set to true by default but you may consider setting it to
