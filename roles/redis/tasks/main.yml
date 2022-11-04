@@ -1,0 +1,26 @@
+---
+- name: define redis_package
+  set_fact:
+    redis_package: "{{ __redis_package }}"
+  when: redis_package is not defined
+
+- name: ensure Redis configuration dir exists
+  file:
+    path: "{{ redis_conf_path | dirname }}"
+    state: directory
+    mode: 0755
+
+- name: ensure Redis is configured
+  template:
+    src: redis.conf.j2
+    dest: "{{ redis_conf_path }}"
+    mode: "{{ redis_conf_mode }}"
+  notify: restart redis
+
+- name: ensure Redis is installed
+  apt:
+    name: "{{ redis_package }}"
+    state: present
+
+- name: ensure Redis is running and enabled on boot
+  service: "name={{ redis_daemon }} state=started enabled=yes"

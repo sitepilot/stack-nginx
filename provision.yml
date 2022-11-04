@@ -50,3 +50,7 @@
     - role: nodejs
       tags: nodejs
       when: "'nodejs' in stack"
+
+    - role: redis
+      tags: redis
+      when: "'redis' in stack"
