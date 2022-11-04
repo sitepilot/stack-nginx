@@ -32,8 +32,8 @@ function error {
 }
 
 function init {
-    lxc launch ubuntu:focal $CONTAINER || return 1
-        
+    lxc launch ubuntu:jelly $CONTAINER || return 1
+
     lxc config device add $CONTAINER ssh proxy listen=tcp:0.0.0.0:$SSH_PORT connect=tcp:127.0.0.1:22 || return 1
     lxc config device add $CONTAINER http proxy listen=tcp:0.0.0.0:$HTTP_PORT connect=tcp:127.0.0.1:80 || return 1
     lxc config device add $CONTAINER https proxy listen=tcp:0.0.0.0:$HTTPS_PORT connect=tcp:127.0.0.1:443 || return 1
