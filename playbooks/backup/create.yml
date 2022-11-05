@@ -45,7 +45,7 @@
       when: database_name | length > 0
 
     - name: "backup files"
-      command: "restic -r {{ backup_repo }} --tag {{ backup_tag }} --quiet --json backup ./public ./private ./certificates"
+      shell: "restic backup -r {{ backup_repo }} --tag {{ backup_tag }} --json ./public ./private ./certificates | grep -v 'percent_done'"
       environment:
         AWS_ACCESS_KEY_ID: "{{ backup_s3_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ backup_s3_secret }}"
