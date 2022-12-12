@@ -3,7 +3,7 @@
   user:
     name: traefik
     shell: /sbin/nologin
-    create_home: no
+    create_home: false
     state: present
 
 - name: Ensure config directory exists.
