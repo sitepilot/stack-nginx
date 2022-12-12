@@ -21,7 +21,19 @@ tests:
           "msmtp",
           "phpmyadmin",
           "nodejs",
-            "redis"
+          "redis"
+        ]
+      ansible_user: root
+      ansible_host: 127.0.0.1
+      ansible_port: 2222
+      ansible_ssh_private_key_file: ssh/id_ed25519
+      ansible_ssh_common_args: -o StrictHostKeyChecking=no
+
+    ingress:
+      hostname: ingress
+      stack:
+        [
+          "traefik"
         ]
       ansible_user: root
       ansible_host: 127.0.0.1

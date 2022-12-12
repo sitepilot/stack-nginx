@@ -2,55 +2,70 @@
 - hosts: localhost
   gather_facts: false
   tasks:
-    - name: ensure host is defined
+    - name: Ensure host variable is defined.
       fail:
         msg: "Host variable is missing. Use `-e` to define `host`: ansible-playbook server.yml -e host=<host-or-group-name>"
       when: host is not defined
-      tags: [variable-check]
+      tags: [ variable-check ]
 
 - hosts: "{{ host }}"
   pre_tasks:
-    - name: ensure stack is defined
+    - name: Ensure stack variable is defined.
       fail:
         msg: "Stack variable is missing. Set the stack variable in your resource file."
       when: stack is not defined
-      tags: [variable-check]
-  roles:
-    - role: common
+      tags: [ variable-check ]
+  tasks:
+    - include_role:
+        name: common
       tags: common
 
-    - role: php
+    - include_role:
+        name: php
       tags: php
       when: "'php' in stack"
 
-    - role: nginx
+    - include_role:
+        name: nginx
       tags: nginx
       when: "'nginx' in stack"
 
-    - role: mariadb
+    - include_role:
+        name: mariadb
       tags: mariadb
       when: "'mariadb' in stack"
 
-    - role: wpcli
+    - include_role:
+        name: wpcli
       tags: wpcli
       when: "'wpcli' in stack"
 
-    - role: composer
+    - include_role:
+        name: composer
       tags: composer
       when: "'composer' in stack"
 
-    - role: msmtp
+    - include_role:
+        name: msmtp
       tags: msmtp
       when: "'msmtp' in stack"
 
-    - role: phpmyadmin
+    - include_role:
+        name: phpmyadmin
       tags: phpmyadmin
       when: "'phpmyadmin' in stack"
 
-    - role: nodejs
+    - include_role:
+        name: nodejs
       tags: nodejs
       when: "'nodejs' in stack"
 
-    - role: redis
+    - include_role:
+        name: redis
       tags: redis
       when: "'redis' in stack"
+
+    - include_role:
+        name: traefik
+      tags: traefik
+      when: "'traefik' in stack"
