@@ -1,5 +1,5 @@
 ---
-- name: "backup files"
+- name: Create a backup.
   hosts: "{{ host }}"
   vars:
     site_name: ""
@@ -25,7 +25,7 @@
         backup_path: "/www/{{ site_name }}"
         dump_file: "/www/{{ site_name }}/private/{{ site_name }}.sql"
 
-    - name: "initialize backup respository"
+    - name: Initialize backup repository.
       command: "restic -r {{ backup_repo }} init"
       environment:
         AWS_ACCESS_KEY_ID: "{{ backup_s3_key }}"
@@ -35,7 +35,7 @@
       failed_when: false
       changed_when: false
 
-    - name: "create database dump"
+    - name: Create database dump.
       mysql_db:
         state: dump
         name: "{{ database_name }}"
@@ -44,8 +44,8 @@
         login_unix_socket: "/run/mysqld/mysqld.sock"
       when: database_name | length > 0
 
-    - name: "backup files"
-      shell: "restic backup -r {{ backup_repo }} --tag {{ backup_tag }} --json ./public ./private ./certificates | grep -v 'percent_done'"
+    - name: Backup files.
+      shell: "restic backup -r {{ backup_repo }} --tag {{ backup_tag }} --json ./public ./private ./certs | grep -v 'percent_done'"
       environment:
         AWS_ACCESS_KEY_ID: "{{ backup_s3_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ backup_s3_secret }}"
@@ -55,7 +55,7 @@
       changed_when: false
       register: result
 
-    - name: "result"
+    - name: Print result.
       debug:
         msg: "{{ item | from_json }}"
       loop: "{{ result.stdout_lines }}"

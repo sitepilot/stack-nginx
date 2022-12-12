@@ -18,8 +18,8 @@ server {
 	root /www/{{ site_name }}/public/{{ nginx_public_dir }};
 
 	# Paths to certificate files
-	ssl_certificate /www/{{ site_name }}/certificates/default.crt;
-	ssl_certificate_key /www/{{ site_name }}/certificates/default.key;
+	ssl_certificate /www/{{ site_name }}/certs/default.crt;
+	ssl_certificate_key /www/{{ site_name }}/certs/default.key;
 
 	# File to be used as index
 	index index.php index.html;
@@ -185,9 +185,9 @@ server {
 		fastcgi_cache_valid 60m;
 
 		# Sitepilot cache params
-		fastcgi_param SITEPILOT_CACHE on;
-		fastcgi_param SITEPILOT_CACHE_ZONE {{ site_name }};
-		fastcgi_param SITEPILOT_CACHE_PATH /www/{{ site_name }}/cache;
+		fastcgi_param SP_CACHE on;
+		fastcgi_param SP_CACHE_ZONE {{ site_name }};
+		fastcgi_param SP_CACHE_PATH /www/{{ site_name }}/cache;
 
 {% endif %}
 		fastcgi_pass  unix:/run/php/php{{ php_version }}-fpm.sock;

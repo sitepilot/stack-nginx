@@ -4,20 +4,13 @@
       - nodejs_version | string | length > 0
       - "'{{ nodejs_version }}' in nodejs_versions"
 
-- name: install dependencies
-  apt:
-    name:
-      - gnupg2
-      - apt-transport-https
-    state: present
-
-- name: add nodesource apt key
+- name: Add NodeJS repository key.
   apt_key:
     url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
     id: "68576280"
     state: present
 
-- name: add nodesource repositories
+- name: Add NodeJS repository.
   apt_repository:
     repo: "{{ item }}"
     state: present
@@ -26,7 +19,7 @@
     - "deb-src https://deb.nodesource.com/node_{{ nodejs_version }} {{ ansible_distribution_release }} main"
   register: node_repo
 
-- name: install nodejs
+- name: Install NodeJS.
   apt:
     name: "nodejs={{ nodejs_version|regex_replace('x', '') }}*"
     state: present

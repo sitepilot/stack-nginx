@@ -5,13 +5,13 @@
       - database_name | length > 0
       - database_password | length > 0
 
-- name: "create database {{ database_name }}"
+- name: "Create database {{ database_name }}."
   mysql_db:
     name: "{{ database_name }}"
     state: "present"
     login_unix_socket: "{{ mariadb_unix_socket }}"
 
-- name: "create database user {{ database_user }}"
+- name: "Create database user {{ database_user }}."
   mysql_user:
     name: "{{ database_user }}"
     password: "{{ database_password }}"

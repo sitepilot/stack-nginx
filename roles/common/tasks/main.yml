@@ -3,14 +3,84 @@
     that:
       - hostname | string | length > 0
 
-- import_tasks: base.yml
-  tags: "base"
+- name: "Install base packages."
+  apt:
+    name:
+      - python3
+      - python3-apt
+      - python3-pip
+      - curl
+      - zip
+      - unzip
+      - restic
+      - git
+      - cron
+      - nano
+      - rsyslog
+      - unattended-upgrades
+      - gnupg2
+      - apt-transport-https
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
 
-- import_tasks: hostname.yml
-  tags: "hostname"
+- name: "Enable and start rsyslog."
+  service:
+    name: rsyslog
+    state: started
+    enabled: true
 
-- import_tasks: sshd.yml
-  tags: "sshd"
+- name: "Set the timezone."
+  timezone:
+    name: "{{ timezone }}"
 
-- import_tasks: unattended-upgrades.yml
-  tags: "unattended-upgrades"
+- name: "Set the hostname."
+  hostname:
+    name: "{{ hostname }}"
+
+- name: "Add hostname to /etc/hosts."
+  blockinfile:
+    path: /etc/hosts
+    marker: "# {mark} Sitepilot Hostname"
+    block: |
+      ::1 {{ hostname }}
+      127.0.0.1 {{ hostname }}
+
+- name: "Generate sshd configuration."
+  template:
+    src: sshd_config.j2
+    dest: "/etc/ssh/sshd_config"
+    mode: "0644"
+  notify:
+    - reload sshd
+
+- name: "Install welcome message."
+  template:
+    src: welcome.j2
+    dest: /etc/update-motd.d/00-sitepilot-welcome
+    mode: "0755"
+
+- name: "Cleanup MOTD files."
+  file:
+    path: "/etc/update-motd.d/{{ item }}"
+    state: absent
+  loop:
+    - 10-help-text
+    - 50-motd-news
+    - 50-landscape-sysinfo
+    - 85-fwupd
+    - 90-updates-available
+    - 91-release-upgrade
+    - 95-hwe-eol
+    - 97-overlayroot
+    - 98-fsck-at-reboot
+    - 98-reboot-required
+
+- name: "Generate unattendend upgrades configuration."
+  template:
+    src: unattended_upgrades.j2
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  notify: restart unattended-upgrades

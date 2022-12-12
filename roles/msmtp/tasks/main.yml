@@ -1,10 +1,10 @@
 ---
-- name: "install required packages"
+- name: Install MSMTP.
   apt:
-    name: "msmtp"
+    name: msmtp
     state: present
 
-- name: "generate configuration"
+- name: Generate MSMTP configuration.
   template:
     src: msmtprc.j2
     dest: "/etc/msmtprc"

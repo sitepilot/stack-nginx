@@ -3,7 +3,7 @@
     that:
       - "'php' in stack"
 
-- name: "download and save"
+- name: Install WPCLI.
   get_url:
     url: "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
     dest: "/usr/local/bin/wp"

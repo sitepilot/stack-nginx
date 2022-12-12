@@ -1,5 +1,5 @@
 ---
-- name: "destroy backup"
+- name: Destroy a backup.
   hosts: "{{ host }}"
   vars:
     backup_id: ""
@@ -18,7 +18,7 @@
           - backup_password | length > 0
           - "'restic' in ansible_facts.packages"
 
-    - name: "destroy backup"
+    - name: Delete backup from repository.
       command: "restic -r {{ backup_repo }} forget {{ backup_id }}"
       environment:
         AWS_ACCESS_KEY_ID: "{{ backup_s3_key }}"
@@ -27,6 +27,6 @@
       changed_when: false
       register: result
 
-    - name: "result"
+    - name: Print result.
       debug:
         msg: "{{ result.stdout_lines | last }}"

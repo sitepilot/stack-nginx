@@ -1,5 +1,5 @@
 ---
-- name: delete anonymous MariaDB user
+- name: Delete anonymous MariaDB user.
   mysql_user:
     name: ""
     host: "{{ item }}"
@@ -7,18 +7,18 @@
     login_unix_socket: "{{ mariadb_unix_socket }}"
   with_items:
     - localhost
-    - "{{ ansible_nodename }}"
+    - "{{ hostname }}"
   no_log: true
 
-- name: delete Hostname based MariaDB user
+- name: Delete hostname based MariaDB user.
   mysql_user:
     name: root
-    host: "{{ ansible_nodename }}"
+    host: "{{ hostname }}"
     state: absent
     login_unix_socket: "{{ mariadb_unix_socket }}"
   no_log: true
 
-- name: Remove MySQL test database
+- name: Remove MySQL test database.
   mysql_db:
     name: test
     state: absent

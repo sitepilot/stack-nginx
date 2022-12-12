@@ -1,5 +1,5 @@
 ---
-- name: "restore backup"
+- name: Restore a backup.
   hosts: "{{ host }}"
   vars:
     site_name: ""
@@ -25,7 +25,7 @@
         restore_path: "/www/{{ site_name }}"
         dump_file: "/www/{{ site_name }}/private/{{ site_name }}.sql"
 
-    - name: "restore site files"
+    - name: Restore backup files.
       command: "restic -r {{ backup_repo }} restore {{ backup_id }} --target ."
       environment:
         AWS_ACCESS_KEY_ID: "{{ backup_s3_key }}"
@@ -36,7 +36,7 @@
       register: result
       changed_when: false
 
-    - name: "restore database"
+    - name: Restore database.
       mysql_db:
         state: import
         name: "{{ database_name }}"
@@ -45,6 +45,6 @@
         login_unix_socket: "/run/mysqld/mysqld.sock"
       when: database_name | length > 0
 
-    - name: "result"
+    - name: Print result.
       debug:
         msg: "{{ result.stdout_lines | last }}"

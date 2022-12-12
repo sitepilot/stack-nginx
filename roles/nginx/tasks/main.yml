@@ -4,13 +4,13 @@
       - site_name | string | length > 0
       - user_name | string | length > 0
 
-- name: "add repository"
+- name: Add Nginx repository.
   apt_repository:
     repo: ppa:ondrej/nginx
     state: present
   register: add_repository
 
-- name: "install packages"
+- name: Install Nginx.
   apt:
     name:
       - nginx
@@ -18,10 +18,10 @@
     update_cache: "{{ add_repository.changed }}"
   notify: "reload nginx"
 
-- name: "create folders"
+- name: Create directories.
   file:
     path: "{{ item.path }}"
-    state: directory
+    state: "{{ item.state }}"
     mode: "0755"
     owner: "{{ item.user }}"
     group: "{{ item.group }}"
@@ -29,42 +29,52 @@
     - path: "/etc/nginx/global"
       user: root
       group: root
+      state: directory
     - path: "/etc/nginx/locations"
       user: root
       group: root
+      state: directory
     - path: "/www/{{ site_name }}/logs"
-      user: "root"
-      group: "root"
-    - path: "/www/{{ site_name }}/certificates"
-      user: "root"
-      group: "root"
+      user: root
+      group: root
+      state: directory
+    - path: "/www/{{ site_name }}/certs"
+      user: root
+      group: root
+      state: directory
     - path: "/www/{{ site_name }}/public"
       user: "{{ user_name }}"
-      group: "www-data"
+      group: www-data
+      state: directory
     - path: "/www/{{ site_name }}/private"
       user: "{{ user_name }}"
-      group: "www-data"
+      group: www-data
+      state: directory
+    - path: "/www/{{ site_name }}/certificates"
+      user: root
+      group: root
+      state: absent
 
-- name: "generate default key"
+- name: Generate certificate key.
   openssl_privatekey:
-    path: "/www/{{ site_name }}/certificates/default.key"
+    path: "/www/{{ site_name }}/certs/default.key"
   notify: reload nginx
 
-- name: "generate default csr"
+- name: Generate certificate csr.
   openssl_csr:
-    path: "/www/{{ site_name }}/certificates/default.csr"
-    privatekey_path: "/www/{{ site_name }}/certificates/default.key"
+    path: "/www/{{ site_name }}/certs/default.csr"
+    privatekey_path: "/www/{{ site_name }}/certs/default.key"
   notify: reload nginx
 
-- name: "generate default certificate"
+- name: Generate default certificate.
   openssl_certificate:
-    path: "/www/{{ site_name }}/certificates/default.crt"
-    privatekey_path: "/www/{{ site_name }}/certificates/default.key"
-    csr_path: "/www/{{ site_name }}/certificates/default.csr"
+    path: "/www/{{ site_name }}/certs/default.crt"
+    privatekey_path: "/www/{{ site_name }}/certs/default.key"
+    csr_path: "/www/{{ site_name }}/certs/default.csr"
     provider: selfsigned
   notify: reload nginx
 
-- name: "generate configuration"
+- name: Generate Nginx configuration.
   template:
     src: "{{ item.template }}"
     dest: "{{ item.destination }}"
@@ -79,7 +89,7 @@
   notify:
     - reload nginx
 
-- name: ensure nginx is started and enabled on boot
+- name: Ensure Nginx is started and enabled on boot.
   service:
     name: nginx
     state: started

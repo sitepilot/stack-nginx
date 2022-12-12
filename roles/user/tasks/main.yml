@@ -5,7 +5,7 @@
       - user_password | length > 0
       - site_name | length > 0
 
-- name: "create user"
+- name: "Create {{ user_name }} user."
   user:
     name: "{{ user_name }}"
     group: "www-data"
@@ -15,7 +15,7 @@
     home: "/www/{{ site_name }}"
     shell: /bin/bash
 
-- name: "add authorized keys"
+- name: Add authorized keys.
   authorized_key:
     user: "{{ user_name }}"
     state: "present"

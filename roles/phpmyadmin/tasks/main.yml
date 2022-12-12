@@ -5,48 +5,48 @@
       - "'nginx' in stack"
       - "'mariadb' in stack"
 
-- name: "check version"
+- name: Check installed version.
   stat:
     path: "/www/{{ site_name }}/phpmyadmin/.version-{{ phpmyadmin_version }}"
   register: version_check
 
-- name: "cleanup old phpmyadmin files"
+- name: Cleanup old installation files.
   file:
     state: absent
     path: "/www/{{ site_name }}/phpmyadmin"
   when: not version_check.stat.exists
 
-- name: "download and unzip source"
+- name: Download and unzip source.
   unarchive:
     src: "https://files.phpmyadmin.net/phpMyAdmin/{{ phpmyadmin_version }}/phpMyAdmin-{{ phpmyadmin_version }}-all-languages.zip"
     dest: "/www/{{ site_name }}"
     remote_src: true
   when: not version_check.stat.exists
 
-- name: rename source folder
+- name: Rename source folder.
   command: "mv /www/{{ site_name }}/phpMyAdmin-{{ phpmyadmin_version }}-all-languages /www/{{ site_name }}/phpmyadmin"
   when: not version_check.stat.exists
 
-- name: create version file
+- name: Create version file.
   copy:
     content: "{{ phpmyadmin_version }}"
     dest: "/www/{{ site_name }}/phpmyadmin/.version-{{ phpmyadmin_version }}"
     mode: 0644
   when: not version_check.stat.exists
 
-- name: "check blowfish file"
+- name: Check blowfish file.
   stat:
     path: "/www/{{ site_name }}/phpmyadmin/blowfish.inc.php"
   register: blowfish_check
 
-- name: "generate blowfish secret"
+- name: Generate blowfish secret.
   template:
     src: blowfish.j2
     dest: "/www/{{ site_name }}/phpmyadmin/blowfish.inc.php"
     mode: 0644
   when: not blowfish_check.stat.exists
 
-- name: "setup permissions"
+- name: Update permissions.
   file:
     state: "directory"
     path: "/www/{{ site_name }}/phpmyadmin/tmp"
@@ -54,7 +54,7 @@
     group: www-data
     mode: 0755
 
-- name: "generate config"
+- name: Generate configuartion.
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
