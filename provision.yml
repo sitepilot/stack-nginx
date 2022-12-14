@@ -64,8 +64,3 @@
         name: redis
       tags: redis
       when: "'redis' in stack"
-
-    - include_role:
-        name: traefik
-      tags: traefik
-      when: "'traefik' in stack"

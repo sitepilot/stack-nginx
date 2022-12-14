@@ -4,5 +4,7 @@ nginx_cache_enabled: false
 nginx_hsts_enabled: false
 nginx_block_robots: false
 nginx_real_ip_from:
-  - 127.0.0.1
+  - 10.0.0.0/8
+  - 172.16.0.0/12
+  - 192.168.0.0/16
 nginx_real_ip_header: 'X-Forwarded-For'

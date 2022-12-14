@@ -7,10 +7,10 @@ set -o pipefail
 # ---------------------------------------------------------- #
 # Configuration
 # ---------------------------------------------------------- #
-SSH_PORT=2222
-HTTP_PORT=8080
-HTTPS_PORT=8443
 CONTAINER=test-container
+SSH_PORT=6022
+HTTP_PORT=6080
+HTTPS_PORT=6443
 
 # ---------------------------------------------------------- #
 # Defaults
@@ -51,10 +51,6 @@ function provision {
   ansible-playbook provision.yml -e host=test-site || return 1
 }
 
-function provision_ingress {
-  ansible-playbook provision.yml -e host=ingress || return 1
-}
-
 function snapshot {
   lxc snapshot $CONTAINER || return 1
 }
@@ -76,9 +72,6 @@ init)
   ;;
 provision)
   provision || error "Failed to provision test container."
-  ;;
-provision-ingress)
-  provision_ingress || error "Failed to provision ingress container."
   ;;
 snapshot)
   snapshot || error "Failed to create a snapshot."
