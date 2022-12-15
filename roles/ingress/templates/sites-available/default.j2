@@ -1,0 +1,19 @@
+server {
+    listen [::]:80 ipv6only=off default_server proxy_protocol;
+    listen [::]:443 ipv6only=off ssl http2 default_server proxy_protocol;
+
+    server_name {{ hostname }};
+
+    include snippets/snakeoil.conf;
+
+    resolver 127.0.0.53 ipv6=off;
+
+    location / {
+        proxy_pass $http_sp_proxy;
+        proxy_set_header Host $http_sp_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header SP-Proxy '';
+        proxy_ssl_verify off;
+    }
+}

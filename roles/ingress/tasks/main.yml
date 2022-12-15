@@ -1,0 +1,34 @@
+---
+- name: Add Nginx repository.
+  apt_repository:
+    repo: ppa:ondrej/nginx
+    state: present
+  register: add_repository
+
+- name: Install Nginx.
+  apt:
+    name:
+      - nginx
+      - ssl-cert
+    state: present
+    update_cache: "{{ add_repository.changed }}"
+  notify: reload nginx
+
+- name: Generate Nginx configuration.
+  template:
+    src: "{{ item.template }}"
+    dest: "{{ item.destination }}"
+    mode: "0644"
+  loop:
+    - template: nginx.j2
+      destination: /etc/nginx/nginx.conf
+    - template: sites-available/default.j2
+      destination: /etc/nginx/sites-available/default
+  notify:
+    - reload nginx
+
+- name: Ensure Nginx is started and enabled on boot.
+  service:
+    name: nginx
+    state: started
+    enabled: true

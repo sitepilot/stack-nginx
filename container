@@ -51,6 +51,10 @@ function provision {
   ansible-playbook provision.yml -e host=test-site || return 1
 }
 
+function provision-ingress {
+  ansible-playbook provision.yml -e host=test-ingress || return 1
+}
+
 function snapshot {
   lxc snapshot $CONTAINER || return 1
 }
@@ -72,6 +76,9 @@ init)
   ;;
 provision)
   provision || error "Failed to provision test container."
+  ;;
+provision-ingress)
+  provision-ingress || error "Failed to provision ingress container."
   ;;
 snapshot)
   snapshot || error "Failed to create a snapshot."

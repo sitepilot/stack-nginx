@@ -64,3 +64,8 @@
         name: redis
       tags: redis
       when: "'redis' in stack"
+
+    - include_role:
+        name: ingress
+      tags: ingress
+      when: "'ingress' in stack"
