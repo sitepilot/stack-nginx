@@ -77,7 +77,7 @@ server {
 	fastcgi_ignore_headers Cache-Control Expires Set-Cookie;
 
 	# Show the cache status in server responses.
-	add_header X-Sitepilot-Cache $upstream_cache_status;
+	add_header SP-Cache-Status $upstream_cache_status;
 
 	# Don't skip by default
 	set $skip_cache 0;
