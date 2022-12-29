@@ -6,7 +6,7 @@ tests:
       site_name: test-site
       user_name: test-user
       user_password: $2y$10$kit1fHeGNDnQmkM.BA62kubip04TUNLRQYl1EJPNawJhNgOrniP5G # secret
-      php_version: 8.0
+      php_version: "8.0"
       nginx_cache_enabled: false
       database_name: "test-site-prod"
       database_user: "test-user"
@@ -14,7 +14,6 @@ tests:
       stack:
         [
           "nginx",
-          "php",
           "mariadb",
           "wpcli",
           "composer",

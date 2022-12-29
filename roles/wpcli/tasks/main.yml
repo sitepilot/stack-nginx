@@ -1,7 +1,7 @@
 ---
-- assert:
-    that:
-      - "'php' in stack"
+- name: Check if PHP is installed.
+  command: "php --version"
+  changed_when: false
 
 - name: Install WPCLI.
   get_url:

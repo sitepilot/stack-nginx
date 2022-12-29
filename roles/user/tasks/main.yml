@@ -21,3 +21,51 @@
     state: "present"
     key: "{{ user_authorized_keys | join('\n') }}"
     exclusive: true
+
+- name: Create directories.
+  file:
+    path: "{{ item.path }}"
+    state: "{{ item.state }}"
+    mode: "0755"
+    owner: "{{ item.user }}"
+    group: "{{ item.group }}"
+  loop:
+    - path: "/www/{{ site_name }}/logs"
+      user: root
+      group: root
+      state: directory
+    - path: "/www/{{ site_name }}/certs"
+      user: root
+      group: root
+      state: directory
+    - path: "/www/{{ site_name }}/public"
+      user: "{{ user_name }}"
+      group: www-data
+      state: directory
+    - path: "/www/{{ site_name }}/private"
+      user: "{{ user_name }}"
+      group: www-data
+      state: directory
+    - path: "/www/{{ site_name }}/certificates"
+      user: root
+      group: root
+      state: absent
+
+- name: Generate certificate key.
+  openssl_privatekey:
+    path: "/www/{{ site_name }}/certs/default.key"
+  notify: reload webserver
+
+- name: Generate certificate csr.
+  openssl_csr:
+    path: "/www/{{ site_name }}/certs/default.csr"
+    privatekey_path: "/www/{{ site_name }}/certs/default.key"
+  notify: reload webserver
+
+- name: Generate default certificate.
+  openssl_certificate:
+    path: "/www/{{ site_name }}/certs/default.crt"
+    privatekey_path: "/www/{{ site_name }}/certs/default.key"
+    csr_path: "/www/{{ site_name }}/certs/default.csr"
+    provider: selfsigned
+  notify: reload webserver

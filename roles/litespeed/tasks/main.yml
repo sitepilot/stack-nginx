@@ -1,0 +1,24 @@
+---
+- assert:
+    that:
+      - "'nginx' not in stack"
+
+- name: Install Litespeed repository keys.
+  apt_key:
+    url: "{{ item }}"
+    state: present
+  loop:
+    - http://rpms.litespeedtech.com/debian/lst_repo.gpg
+    - http://rpms.litespeedtech.com/debian/lst_debian_repo.gpg
+
+- name: Add Litespeed repository.
+  apt_repository:
+    repo: "deb https://rpms.litespeedtech.com/debian/ jammy main"
+    state: present
+    mode: "0644"
+
+- include_tasks: lsphp.yml
+  tags: php
+
+- include_tasks: litespeed.yml
+  tags: webserver

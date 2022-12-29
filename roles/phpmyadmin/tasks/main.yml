@@ -1,9 +1,8 @@
 ---
 - assert:
     that:
-      - "'php' in stack"
-      - "'nginx' in stack"
       - "'mariadb' in stack"
+      - "'nginx' in stack or 'litespeed' in stack"
 
 - name: Check installed version.
   stat:
@@ -60,8 +59,16 @@
     dest: "{{ item.dest }}"
     mode: 0644
   loop:
-    - src: nginx.j2
-      dest: /etc/nginx/locations/phpmyadmin.conf
     - src: config.j2
       dest: "/www/{{ site_name }}/phpmyadmin/config.inc.php"
-  notify: reload nginx
+
+- name: Generate Nginx configuartion.
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+  loop:
+    - src: nginx.j2
+      dest: /etc/nginx/locations/phpmyadmin.conf
+  notify: reload webserver
+  when: "'nginx' in stack"

@@ -4,13 +4,13 @@
       - php_version | string | length > 0
       - "'{{ php_version }}' in php_versions"
 
-- name: "{{ php_version }} : Add repository."
+- name: "php{{ php_version }} : Add repository."
   apt_repository:
     repo: ppa:ondrej/php
     state: present
   register: add_repository
 
-- name: "{{ php_version }} : Install packages."
+- name: "php{{ php_version }} : Install packages."
   apt:
     name:
       - php{{ php_version }}-apcu
@@ -41,19 +41,19 @@
     update_cache: "{{ add_repository.changed }}"
   notify: "reload php{{ php_version }}-fpm"
 
-- name: "{{ php_version }} : Generate configuration."
+- name: "php{{ php_version }} : Generate configuration."
   template:
     src: "{{ item.template }}"
     dest: "{{ item.destination }}"
     mode: "0644"
   notify: "reload php{{ php_version }}-fpm"
   loop:
-    - template: www.j2
+    - template: pool.j2
       destination: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
-    - template: php_ini.j2
+    - template: php.j2
       destination: "/etc/php/{{ php_version }}/fpm/php.ini"
 
-- name: "{{ php_version }} : Update alternatives."
+- name: "php{{ php_version }} : Update alternatives."
   alternatives:
     name: php
     path: /usr/bin/php{{ php_version }}

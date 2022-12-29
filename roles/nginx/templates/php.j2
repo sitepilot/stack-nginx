@@ -1,0 +1,10 @@
+; {{ ansible_managed }}
+date.timezone = '{{ timezone }}'
+memory_limit = 256M
+max_execution_time = 300
+max_input_vars = 10000
+post_max_size = 100M
+upload_max_filesize = 100M
+sendmail_path=/usr/bin/msmtp -t
+mail.log='/www/{{ site_name }}/logs/mail.log'
+error_log='/www/{{ site_name }}/logs/debug.log'

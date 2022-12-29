@@ -1,0 +1,30 @@
+---
+- name: Install Litespeed.
+  apt:
+    name:
+      - openlitespeed
+      - ols-modsecurity
+    state: present
+    update_cache: true
+  notify: reload webserver
+
+- name: Generate Litespeed configuration
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "lsadm"
+    group: "nogroup"
+    mode: "0644"
+  loop:
+    - src: httpd.j2
+      dest: /usr/local/lsws/conf/httpd_config.conf
+    - src: vhost.j2
+      dest: /usr/local/lsws/conf/vhosts/{{ site_name }}.conf
+  notify:
+    - reload webserver
+
+- name: Ensure Litespeed is started and enabled on boot.
+  service:
+    name: lshttpd
+    state: started
+    enabled: true
