@@ -1,0 +1,53 @@
+---
+- assert:
+    that:
+      - php_version | string | length > 0
+      - "'{{ php_version }}' in lsphp_versions"
+
+- set_fact:
+    lsphp_version: "{{ lsphp_versions[php_version] }}"
+
+- name: "lsphp{{ php_version }} : Install packages."
+  apt:
+    name:
+      - lsphp{{ lsphp_version }}
+      - lsphp{{ lsphp_version }}-common
+      - lsphp{{ lsphp_version }}-curl
+      - lsphp{{ lsphp_version }}-dbg
+      - lsphp{{ lsphp_version }}-dev
+      - lsphp{{ lsphp_version }}-igbinary
+      - lsphp{{ lsphp_version }}-imagick
+      - lsphp{{ lsphp_version }}-imap
+      - lsphp{{ lsphp_version }}-intl
+      - lsphp{{ lsphp_version }}-mysql
+      - lsphp{{ lsphp_version }}-opcache
+      - lsphp{{ lsphp_version }}-redis
+    state: present
+
+- name: "lsphp{{ php_version }} : Install PHP7 specific packages."
+  apt:
+    name:
+      - lsphp{{ lsphp_version }}-json
+      - lsphp{{ lsphp_version }}-ioncube
+    state: present
+  when: php_version == 7.4
+
+- name: "lsphp{{ php_version }} : Update alternatives."
+  alternatives:
+    name: php
+    path: /usr/local/lsws/lsphp{{ lsphp_version }}/bin/php
+
+- name: "lsphp{{ php_version }} : Update alternatives."
+  alternatives:
+    name: php
+    path: /usr/local/lsws/lsphp{{ lsphp_version }}/bin/php
+
+- name: "lsphp{{ php_version }} : Generate php configuration."
+  template:
+    src: "{{ item.template }}"
+    dest: "{{ item.destination }}"
+    mode: "0644"
+  loop:
+    - template: php.j2
+      destination: "/usr/local/lsws/lsphp{{ lsphp_version }}/etc/php/{{ php_version }}/mods-available/99-sitepilot.ini"
+  notify: reload webserver

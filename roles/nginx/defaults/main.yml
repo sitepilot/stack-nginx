@@ -8,3 +8,7 @@ nginx_real_ip_from:
   - 172.16.0.0/12
   - 192.168.0.0/16
 nginx_real_ip_header: 'X-Forwarded-For'
+
+php_version: ""
+php_max_children: 5
+php_opcache_revalidate_freq: 2

@@ -9,10 +9,26 @@
   apt:
     name:
       - nginx
-      - ssl-cert
     state: present
     update_cache: "{{ add_repository.changed }}"
-  notify: reload ingress
+  notify: "reload webserver"
+
+- name: Create directories.
+  file:
+    path: "{{ item.path }}"
+    state: "{{ item.state }}"
+    mode: "0755"
+    owner: "{{ item.user }}"
+    group: "{{ item.group }}"
+  loop:
+    - path: "/etc/nginx/global"
+      user: root
+      group: root
+      state: directory
+    - path: "/etc/nginx/locations"
+      user: root
+      group: root
+      state: directory
 
 - name: Generate Nginx configuration.
   template:
@@ -24,8 +40,10 @@
       destination: /etc/nginx/nginx.conf
     - template: sites-available/default.j2
       destination: /etc/nginx/sites-available/default
+    - template: logrotate.j2
+      destination: /etc/logrotate.d/www-logs
   notify:
-    - reload ingress
+    - reload webserver
 
 - name: Ensure Nginx is started and enabled on boot.
   service:

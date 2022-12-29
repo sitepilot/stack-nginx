@@ -11,6 +11,7 @@ CONTAINER=test-container
 SSH_PORT=6022
 HTTP_PORT=6080
 HTTPS_PORT=6443
+LSADM_PORT=6070
 
 # ---------------------------------------------------------- #
 # Defaults
@@ -37,6 +38,7 @@ function init {
   lxc config device add $CONTAINER ssh proxy listen=tcp:0.0.0.0:$SSH_PORT connect=tcp:127.0.0.1:22 || return 1
   lxc config device add $CONTAINER http proxy listen=tcp:0.0.0.0:$HTTP_PORT connect=tcp:127.0.0.1:80 || return 1
   lxc config device add $CONTAINER https proxy listen=tcp:0.0.0.0:$HTTPS_PORT connect=tcp:127.0.0.1:443 || return 1
+  lxc config device add $CONTAINER lsadm proxy listen=tcp:0.0.0.0:$LSADM_PORT connect=tcp:127.0.0.1:7080 || return 1
 
   sleep 5
 

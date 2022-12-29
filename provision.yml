@@ -17,18 +17,14 @@
       tags: [ variable-check ]
   tasks:
     - include_role:
-        name: common
-      tags: common
-
-    - include_role:
-        name: php
-      tags: php
-      when: "'php' in stack"
-
-    - include_role:
         name: nginx
       tags: nginx
       when: "'nginx' in stack"
+
+    - include_role:
+        name: litespeed
+      tags: litespeed
+      when: "'litespeed' in stack"
 
     - include_role:
         name: mariadb

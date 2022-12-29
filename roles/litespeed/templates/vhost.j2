@@ -1,0 +1,33 @@
+# {{ ansible_managed }}
+docRoot                   $VH_ROOT/public
+
+errorlog $VH_ROOT/logs/error.log {
+  useServer               0
+  logLevel                ERROR
+  rollingSize             10M
+  keepDays                7
+}
+
+accesslog $VH_ROOT/logs/access.log {
+  useServer               0
+  logHeaders              0
+  rollingSize             10M
+  keepDays                7
+}
+
+context /-/phpmyadmin/ {
+  location                /www/{{ site_name }}/phpmyadmin
+  allowBrowse             1
+
+  rewrite  {
+    enable                1
+    inherit               0
+  }
+
+  addDefaultCharset       off
+}
+
+rewrite  {
+  enable                  1
+  autoLoadHtaccess        1
+}

@@ -1,5 +1,0 @@
----
-# Supported versions are defined in ../vars/main.yml
-php_version: ""
-php_max_children: 5
-php_opcache_revalidate_freq: 2

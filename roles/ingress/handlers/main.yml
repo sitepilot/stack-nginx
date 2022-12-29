@@ -1,5 +1,5 @@
 ---
-- name: reload nginx
+- name: reload ingress
   service:
     name: nginx
     state: reloaded
