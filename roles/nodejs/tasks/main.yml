@@ -8,7 +8,7 @@
   apt_key:
     url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
     id: "68576280"
-    state: present
+    keyring: /etc/apt/trusted.gpg.d/nodejs.gpg
 
 - name: Add NodeJS repository.
   apt_repository:

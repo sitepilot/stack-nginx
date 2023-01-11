@@ -3,6 +3,12 @@
     that:
       - "'litespeed' not in stack"
 
+- name: Add Nginx & PHP repository key.
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: "4f4ea0aae5267a6c"
+    keyring: /etc/apt/trusted.gpg.d/launchpad-ondrej-sury.gpg
+
 - include_tasks: php.yml
   tags: php
 
