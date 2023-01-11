@@ -2,6 +2,7 @@
 - assert:
     that:
       - "'nginx' not in stack"
+      - "'ingress' not in stack"
 
 - name: Add Litespeed repository key.
   apt_key:
@@ -16,7 +17,6 @@
     mode: "0644"
 
 - include_tasks: lsphp.yml
-  tags: php
+  when: "'php' in stack"
 
 - include_tasks: litespeed.yml
-  tags: webserver

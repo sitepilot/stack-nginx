@@ -54,13 +54,11 @@
 - name: Generate certificate key.
   openssl_privatekey:
     path: "/www/{{ site_name }}/certs/default.key"
-  notify: reload webserver
 
 - name: Generate certificate csr.
   openssl_csr:
     path: "/www/{{ site_name }}/certs/default.csr"
     privatekey_path: "/www/{{ site_name }}/certs/default.key"
-  notify: reload webserver
 
 - name: Generate default certificate.
   openssl_certificate:
@@ -68,4 +66,3 @@
     privatekey_path: "/www/{{ site_name }}/certs/default.key"
     csr_path: "/www/{{ site_name }}/certs/default.csr"
     provider: selfsigned
-  notify: reload webserver

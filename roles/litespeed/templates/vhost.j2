@@ -15,6 +15,7 @@ accesslog $VH_ROOT/logs/access.log {
   keepDays                7
 }
 
+{% if 'phpmyadmin' in stack %}
 context /-/phpmyadmin/ {
   location                /www/{{ site_name }}/phpmyadmin
   allowBrowse             1
@@ -26,6 +27,7 @@ context /-/phpmyadmin/ {
 
   addDefaultCharset       off
 }
+{% endif %}
 
 rewrite  {
   enable                  1

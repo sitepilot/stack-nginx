@@ -50,11 +50,7 @@ function init {
 }
 
 function provision {
-  ansible-playbook provision.yml -e host=test-site || return 1
-}
-
-function provision-ingress {
-  ansible-playbook provision.yml -e host=test-ingress || return 1
+  ansible-playbook provision.yml -e host=test-container "${@}" || return 1
 }
 
 function snapshot {
@@ -77,10 +73,7 @@ init)
   init || error "Failed to initialize test container."
   ;;
 provision)
-  provision || error "Failed to provision test container."
-  ;;
-provision-ingress)
-  provision-ingress || error "Failed to provision ingress container."
+  provision "${@:2}" || error "Failed to provision test container."
   ;;
 snapshot)
   snapshot || error "Failed to create a snapshot."

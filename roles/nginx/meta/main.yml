@@ -1,6 +1,7 @@
 ---
 dependencies:
   - role: common
-    tags: ["common"]
+    tags: common
+
   - role: user
-    tags: ["user"]
+    tags: user

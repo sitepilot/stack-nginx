@@ -6,7 +6,7 @@
       - ols-modsecurity
     state: present
     update_cache: true
-  notify: reload webserver
+  notify: reload litespeed
 
 - name: Generate Litespeed configuration
   template:
@@ -20,8 +20,7 @@
       dest: /usr/local/lsws/conf/httpd_config.conf
     - src: vhost.j2
       dest: /usr/local/lsws/conf/vhosts/{{ site_name }}.conf
-  notify:
-    - reload webserver
+  notify: reload litespeed
 
 - name: Ensure Litespeed is started and enabled on boot.
   service:

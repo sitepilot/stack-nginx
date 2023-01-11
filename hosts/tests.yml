@@ -1,7 +1,7 @@
 ---
 tests:
   hosts:
-    test-site:
+    test-container:
       hostname: test-site-prod
       site_name: test-site
       user_name: test-user
@@ -11,25 +11,6 @@ tests:
       database_name: "test-site-prod"
       database_user: "test-user"
       database_password: "secret"
-      stack:
-        [
-          "nginx",
-          "mariadb",
-          "wpcli",
-          "composer",
-          "msmtp",
-          "phpmyadmin",
-          "nodejs",
-          "redis"
-        ]
-      ansible_user: root
-      ansible_host: 127.0.0.1
-      ansible_port: 6022
-      ansible_ssh_private_key_file: ssh/id_ed25519
-      ansible_ssh_common_args: -o StrictHostKeyChecking=no
-
-    test-ingress:
-      hostname: ingress-live
       stack:
         [
           "ingress"

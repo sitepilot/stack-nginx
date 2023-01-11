@@ -2,6 +2,3 @@
 dependencies:
   - role: common
     tags: common
-
-  - role: user
-    tags: user

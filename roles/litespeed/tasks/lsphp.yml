@@ -50,4 +50,4 @@
   loop:
     - template: php.j2
       destination: "/usr/local/lsws/lsphp{{ lsphp_version }}/etc/php/{{ php_version }}/mods-available/99-sitepilot.ini"
-  notify: reload webserver
+  notify: reload litespeed

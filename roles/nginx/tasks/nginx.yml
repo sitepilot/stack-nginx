@@ -11,7 +11,7 @@
       - nginx
     state: present
     update_cache: "{{ add_repository.changed }}"
-  notify: "reload webserver"
+  notify: reload nginx
 
 - name: Create directories.
   file:
@@ -42,8 +42,15 @@
       destination: /etc/nginx/sites-available/default
     - template: logrotate.j2
       destination: /etc/logrotate.d/www-logs
-  notify:
-    - reload webserver
+  notify: reload nginx
+
+- name: Generate phpMyAdmin configuration.
+  template:
+    src: phpmyadmin.j2
+    dest: /etc/nginx/locations/phpmyadmin.conf
+    mode: "0644"
+  notify: reload nginx
+  when: "'phpmyadmin' in stack"
 
 - name: Ensure Nginx is started and enabled on boot.
   service:

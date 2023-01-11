@@ -1,4 +1,9 @@
 ---
+- assert:
+    that:
+      - "'nginx' not in stack"
+      - "'litespeed' not in stack"
+
 - name: Add Nginx repository key.
   apt_key:
     keyserver: keyserver.ubuntu.com

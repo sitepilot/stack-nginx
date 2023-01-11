@@ -1,5 +1,5 @@
 ---
-- name: reload webserver
+- name: reload nginx
   service:
     name: nginx
     state: reloaded

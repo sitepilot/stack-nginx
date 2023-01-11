@@ -1,13 +1,4 @@
 ---
-- hosts: localhost
-  gather_facts: false
-  tasks:
-    - name: Ensure host variable is defined.
-      fail:
-        msg: "Host variable is missing. Use `-e` to define `host`: ansible-playbook server.yml -e host=<host-or-group-name>"
-      when: host is not defined
-      tags: [ variable-check ]
-
 - hosts: "{{ host }}"
   pre_tasks:
     - name: Ensure stack variable is defined.
@@ -15,53 +6,43 @@
         msg: "Stack variable is missing. Set the stack variable in your resource file."
       when: stack is not defined
       tags: [ variable-check ]
-  tasks:
-    - include_role:
-        name: nginx
+  roles:
+    - role: ingress
+      tags: ingress
+      when: "'ingress' in stack"
+
+    - role: nginx
       tags: nginx
       when: "'nginx' in stack"
 
-    - include_role:
-        name: litespeed
+    - role: litespeed
       tags: litespeed
       when: "'litespeed' in stack"
 
-    - include_role:
-        name: mariadb
-      tags: mariadb
-      when: "'mariadb' in stack"
-
-    - include_role:
-        name: wpcli
-      tags: wpcli
-      when: "'wpcli' in stack"
-
-    - include_role:
-        name: composer
-      tags: composer
-      when: "'composer' in stack"
-
-    - include_role:
-        name: msmtp
+    - role: msmtp
       tags: msmtp
       when: "'msmtp' in stack"
 
-    - include_role:
-        name: phpmyadmin
+    - role: composer
+      tags: composer
+      when: "'composer' in stack"
+
+    - role: wpcli
+      tags: wpcli
+      when: "'wpcli' in stack"
+
+    - role: mariadb
+      tags: mariadb
+      when: "'mariadb' in stack"
+
+    - role: phpmyadmin
       tags: phpmyadmin
       when: "'phpmyadmin' in stack"
 
-    - include_role:
-        name: nodejs
+    - role: nodejs
       tags: nodejs
       when: "'nodejs' in stack"
 
-    - include_role:
-        name: redis
+    - role: redis
       tags: redis
       when: "'redis' in stack"
-
-    - include_role:
-        name: ingress
-      tags: ingress
-      when: "'ingress' in stack"
