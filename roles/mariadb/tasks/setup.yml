@@ -1,11 +1,12 @@
 ---
-- name: Install MariaDB repository key.
+- name: Add MariaDB repository key.
   apt_key:
     keyserver: keyserver.ubuntu.com
     id: "0xF1656F24C74CD1D8"
+    keyring: /etc/apt/trusted.gpg.d/mariadb.gpg
   when: mariadb_use_official_repo
 
-- name: Install MariaDB repository.
+- name: Add MariaDB repository.
   apt_repository:
     repo: deb {{ mariadb_use_official_repo_url }}/{{ mariadb_use_official_repo_version }}/{{ ansible_distribution | lower() }} {{ ansible_distribution_release }} main
     filename: mariadb

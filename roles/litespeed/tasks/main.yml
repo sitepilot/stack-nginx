@@ -3,13 +3,11 @@
     that:
       - "'nginx' not in stack"
 
-- name: Install Litespeed repository keys.
+- name: Add Litespeed repository key.
   apt_key:
-    url: "{{ item }}"
-    state: present
-  loop:
-    - http://rpms.litespeedtech.com/debian/lst_repo.gpg
-    - http://rpms.litespeedtech.com/debian/lst_debian_repo.gpg
+    keyserver: keyserver.ubuntu.com
+    id: "0x011AA62DEDA1F085"
+    keyring: /etc/apt/trusted.gpg.d/litespeed.gpg
 
 - name: Add Litespeed repository.
   apt_repository:
