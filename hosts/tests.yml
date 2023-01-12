@@ -2,7 +2,7 @@
 tests:
   hosts:
     test-container:
-      hostname: test-site-prod
+      hostname: test-site-live
       site_name: test-site
       user_name: test-user
       user_password: $2y$10$kit1fHeGNDnQmkM.BA62kubip04TUNLRQYl1EJPNawJhNgOrniP5G # secret
@@ -13,7 +13,15 @@ tests:
       database_password: "secret"
       stack:
         [
-          "ingress"
+          "nginx",
+          "php",
+          "mariadb",
+          "wpcli",
+          "composer",
+          "msmtp",
+          "phpmyadmin",
+          "nodejs",
+          "redis"
         ]
       ansible_user: root
       ansible_host: 127.0.0.1
