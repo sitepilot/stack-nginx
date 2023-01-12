@@ -15,6 +15,14 @@
     home: "/www/{{ site_name }}"
     shell: /bin/bash
 
+- name: "Generate .bash_profile."
+  template:
+    src: bash_profile.j2
+    dest: "/www/{{ site_name }}/.bash_profile"
+    mode: "0644"
+    owner: "{{ user_name }}"
+    group: "www-data"
+
 - name: Add authorized keys.
   authorized_key:
     user: "{{ user_name }}"
