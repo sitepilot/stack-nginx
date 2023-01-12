@@ -7,6 +7,9 @@
       when: stack is not defined
       tags: [ variable-check ]
   roles:
+    - role: common
+      tags: common
+
     - role: ingress
       tags: ingress
       when: "'ingress' in stack"

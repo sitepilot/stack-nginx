@@ -37,6 +37,7 @@
 - name: "Set the hostname."
   hostname:
     name: "{{ hostname }}"
+  notify: reload sshd
 
 - name: "Add hostname to /etc/hosts."
   blockinfile:
@@ -51,8 +52,7 @@
     src: sshd_config.j2
     dest: "/etc/ssh/sshd_config"
     mode: "0644"
-  notify:
-    - reload sshd
+  notify: reload sshd
 
 - name: "Install welcome message."
   template:
