@@ -23,7 +23,7 @@
 
     - set_fact:
         restore_path: "/www/{{ site_name }}"
-        dump_file: "/www/{{ site_name }}/private/{{ site_name }}.sql"
+        dump_file: "/www/{{ site_name }}/private/backup.sql"
 
     - name: Restore backup files.
       command: "restic -r {{ backup_repo }} restore {{ backup_id }} --target ."

@@ -23,7 +23,7 @@
 
     - set_fact:
         backup_path: "/www/{{ site_name }}"
-        dump_file: "/www/{{ site_name }}/private/{{ site_name }}.sql"
+        dump_file: "/www/{{ site_name }}/private/backup.sql"
 
     - name: Initialize backup repository.
       command: "restic -r {{ backup_repo }} init"
