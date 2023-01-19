@@ -1,0 +1,60 @@
+---
+- assert:
+    that:
+      - site_name | length > 0
+      - database_name | length > 0
+      - database_user | length > 0
+      - database_host | length > 0
+      - database_password | length > 0
+      - pull_key | length > 0
+      - pull_path | length > 0
+      - pull_host | length > 0
+      - pull_user | length > 0
+      - pull_port | string | length > 0
+
+- set_fact:
+    local_path: "/www/{{ site_name }}/public"
+
+- name: Create pull_key file.
+  copy:
+    dest: "/www/{{ site_name }}/.ssh/pull_key"
+    content: "{{ pull_key }}"
+    mode: 0600
+
+- name: Add pull host to SSH config.
+  blockinfile:
+    path: "/www/{{ site_name }}/.ssh/config"
+    marker: "# {mark} Pull Config"
+    create: true
+    block: |
+      Host pull-host
+        Hostname {{ pull_host }}
+        User {{ pull_user }}
+        Port {{ pull_port }}
+        IdentityFile /www/{{ site_name }}/.ssh/pull_key
+
+- name: Export remote database.
+  command: "wp --ssh=pull-host --path={{ pull_path }} --allow-root db export {{ pull_path }}/export.sql"
+
+- name: Pull remote files.
+  command: "rsync -chavzP --delete --stats pull-host:{{ pull_path }}/ {{ local_path }}"
+
+- name: Update configuration.
+  command: "wp --path={{ local_path }} config set {{ item }}"
+  loop:
+    - "DB_HOST {{ database_host }}"
+    - "DB_NAME {{ database_name }}"
+    - "DB_USER {{ database_user }}"
+    - "DB_PASSWORD {{ database_password }}"
+
+- name: Import database.
+  command: "wp --path={{ local_path }} db import {{ local_path }}/export.sql"
+
+- name: Replace in database.
+  command: "wp --path={{ local_path }} search-replace {{ database_search }} {{ database_replace }}"
+  when:
+    - database_search | length > 0
+    - database_replace | length > 0
+
+- name: Optimize the database.
+  command: "wp --path={{ local_path }} db optimize"

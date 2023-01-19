@@ -1,0 +1,15 @@
+---
+site_name: ""
+
+database_name: ""
+database_user: ""
+database_host: "127.0.0.1"
+database_password: ""
+database_search: ""
+database_replace: ""
+
+pull_key: ""
+pull_host: ""
+pull_port: 22
+pull_user: root
+pull_path: ""

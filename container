@@ -53,6 +53,10 @@ function provision {
   ansible-playbook provision.yml -e host=test-container "${@}" || return 1
 }
 
+function wp-pull {
+  ansible-playbook playbooks/wordpress/pull.yml -e host=test-container "${@}" || return 1
+}
+
 function snapshot {
   lxc snapshot $CONTAINER || return 1
 }
@@ -74,6 +78,9 @@ init)
   ;;
 provision)
   provision "${@:2}" || error "Failed to provision test container."
+  ;;
+wp-pull)
+  wp-pull "${@:2}" || error "Failed to pull WordPress to test container."
   ;;
 snapshot)
   snapshot || error "Failed to create a snapshot."

@@ -1,0 +1,7 @@
+---
+- name: Pull a remote WordPress installation.
+  hosts: "{{ host }}"
+  become: yes
+  become_user: "{{ user_name }}"
+  roles:
+    - "wordpress/pull"
