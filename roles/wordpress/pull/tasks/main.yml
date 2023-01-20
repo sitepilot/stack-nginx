@@ -53,6 +53,13 @@
   register: "cmd"
   changed_when: "'receiving incremental file list' in cmd.stdout"
 
+- name: Fix file permissions.
+  command: "{{ item }}"
+  loop:
+    - find {{ local_path }} -type f -exec chmod 644 {} +
+    - find {{ local_path }} -type d -exec chmod 755 {} +
+  changed_when: true
+
 - name: Update configuration.
   command: "wp --path={{ local_path }} config set {{ item }}"
   loop:
