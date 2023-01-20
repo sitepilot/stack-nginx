@@ -4,7 +4,3 @@ skip_list:
   - meta-no-info
   - line-length
   - command-instead-of-module
-
-rules:
-  brackets:
-    max-spaces-inside-empty: 1
