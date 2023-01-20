@@ -13,3 +13,5 @@ pull_host: ""
 pull_port: 22
 pull_user: root
 pull_path: ""
+
+stack: [ ]

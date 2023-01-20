@@ -87,3 +87,9 @@
   command: "wp --path={{ local_path }} db optimize"
   register: "cmd"
   changed_when: "'Success:' in cmd.stdout"
+
+- name: Reload Litespeed webserver.
+  service:
+    name: lshttpd
+    state: reloaded
+  when: "'litespeed' in stack"
