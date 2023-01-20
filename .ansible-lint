@@ -7,4 +7,4 @@ skip_list:
 
 rules:
   brackets:
-    max-spaces-inside: 1
+    max-spaces-inside-empty: 1
