@@ -15,29 +15,43 @@
 - set_fact:
     local_path: "/www/{{ site_name }}/public"
 
+- name: Create SSH directory.
+  file:
+    path: "/www/{{ site_name }}/.ssh"
+    state: directory
+    mode: "0700"
+    owner: "{{ user_name }}"
+    group: www-data
+
 - name: Create pull_key file.
   copy:
     dest: "/www/{{ site_name }}/.ssh/pull_key"
-    content: "{{ pull_key }}"
-    mode: 0600
+    content: "{{ pull_key }}\n"
+    mode: "0600"
 
 - name: Add pull host to SSH config.
   blockinfile:
     path: "/www/{{ site_name }}/.ssh/config"
     marker: "# {mark} Pull Config"
     create: true
+    mode: "0644"
     block: |
       Host pull-host
         Hostname {{ pull_host }}
         User {{ pull_user }}
         Port {{ pull_port }}
         IdentityFile /www/{{ site_name }}/.ssh/pull_key
+        StrictHostKeyChecking no
 
 - name: Export remote database.
   command: "wp --ssh=pull-host --path={{ pull_path }} --allow-root db export {{ pull_path }}/export.sql"
+  register: "cmd"
+  changed_when: "'Success:' in cmd.stdout"
 
 - name: Pull remote files.
   command: "rsync -chavzP --delete --stats pull-host:{{ pull_path }}/ {{ local_path }}"
+  register: "cmd"
+  changed_when: "'receiving incremental file list' in cmd.stdout"
 
 - name: Update configuration.
   command: "wp --path={{ local_path }} config set {{ item }}"
@@ -46,15 +60,23 @@
     - "DB_NAME {{ database_name }}"
     - "DB_USER {{ database_user }}"
     - "DB_PASSWORD {{ database_password }}"
+  register: "cmd"
+  changed_when: "'Success:' in cmd.stdout"
 
 - name: Import database.
   command: "wp --path={{ local_path }} db import {{ local_path }}/export.sql"
+  register: "cmd"
+  changed_when: "'Success:' in cmd.stdout"
 
 - name: Replace in database.
   command: "wp --path={{ local_path }} search-replace {{ database_search }} {{ database_replace }}"
   when:
     - database_search | length > 0
     - database_replace | length > 0
+  register: "cmd"
+  changed_when: "'Success:' in cmd.stdout"
 
 - name: Optimize the database.
   command: "wp --path={{ local_path }} db optimize"
+  register: "cmd"
+  changed_when: "'Success:' in cmd.stdout"
