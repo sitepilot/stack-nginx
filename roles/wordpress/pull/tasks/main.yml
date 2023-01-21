@@ -93,3 +93,4 @@
     name: lshttpd
     state: reloaded
   when: "'litespeed' in stack"
+  become_user: root
