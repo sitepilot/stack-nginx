@@ -38,13 +38,13 @@
     owner: "{{ item.user }}"
     group: "{{ item.group }}"
   loop:
-    - path: "/www/{{ site_name }}/logs"
-      user: root
-      group: root
-      state: directory
     - path: "/www/{{ site_name }}/certs"
       user: root
       group: root
+      state: directory
+    - path: "/www/{{ site_name }}/logs"
+      user: "{{ user_name }}"
+      group: www-data
       state: directory
     - path: "/www/{{ site_name }}/public"
       user: "{{ user_name }}"
