@@ -11,4 +11,4 @@ nginx_real_ip_header: 'X-Forwarded-For'
 
 php_version: ""
 php_max_children: 5
-php_opcache_revalidate_freq: 2
+php_memory_limit: 256M

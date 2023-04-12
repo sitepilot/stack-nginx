@@ -1,6 +1,6 @@
 ; {{ ansible_managed }}
 date.timezone = '{{ timezone }}'
-memory_limit = 256M
+memory_limit = {{ php_memory_limit }}
 max_execution_time = 300
 max_input_vars = 10000
 post_max_size = 100M
